@@ -45,9 +45,10 @@ PLUGIN_FILES = [
 
 class PluginCreator:
 
-    def __init__(self, organization: str, repo: str) -> None:
+    def __init__(self, organization: str, repo: str, url: str) -> None:
         self.organization = organization
         self.repo = repo
+        self.url = url
 
     def create(self):
         os.chdir(TEMPLATE_ROOT_DIR)
@@ -70,6 +71,7 @@ class PluginCreator:
         content = (content.replace('<plugin_name>', PLUGIN_NAME)
                    .replace('<organization>', self.organization)
                    .replace('<repo>', self.repo)
+                   .replace('<url>', self.url)
                    .replace('#<commented_out>', '')
                    .replace('# <commented_out>', '')  # Automatic formatting might cause these
                    )
@@ -85,6 +87,9 @@ def parse_args():
     parser.add_argument('-r', '--repository',
                         help='Github / Gitlab repository name. For example GlobeBuilder in https://github.com/GispoCoding/GlobeBuilder',
                         required=True)
+    parser.add_argument('-u', '--url',
+                        help='Url of the repository hosting service. Typically https://github.com or https://gitlab.com',
+                        default='https://github.com')
     parser.add_argument('-v', '--verbose', type=bool, nargs='?', const=True, help='Verbose')
 
     if '-' in PLUGIN_NAME or ' ' in PLUGIN_NAME:
@@ -95,5 +100,5 @@ def parse_args():
 
 def create_plugin():
     args = parse_args()
-    creator = PluginCreator(args.organization, args.repository)
+    creator = PluginCreator(args.organization, args.repository, args.url)
     creator.create()

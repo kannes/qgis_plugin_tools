@@ -25,18 +25,21 @@ The module is helping you with:
 ### For new plugin
 This will create needed structure for your plugin
 
-1. Create new repository in Github (here using: https://github.com/GispoCoding/test-plugin-name)
+1. Create new repository in Github/Gitlab (here using: https://github.com/GispoCoding/test-plugin-name)
 2. Follow these steps
     ```shell script
     mkdir test-plugin-name
     cd test-plugin-name
     git init
     git remote add origin git@github.com:GispoCoding/test-plugin-name
+
+    # Create a directory that is the name of your plugin WITHOUT '-' char
     mkdir TestPlugin
     cd TestPlugin
     git submodule add https://github.com/GispoCoding/qgis_plugin_tools
     cp qgis_plugin_tools/infrastructure/creator.py .
-    python creator.py -o GispoCoding -r test-plugin-name # Replace with your information
+    # Create the plugin template. Replace with your information
+    python creator.py -o GispoCoding -r test-plugin-name -u https://github.com
     rm creator.py
     ```
 3. Now edit metadata.txt with description etc. and commit changes.

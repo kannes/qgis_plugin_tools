@@ -3,7 +3,7 @@ Development of <plugin_name> plugin
 
 This project uses [qgis_plugin_tools](https://github.com/GispoCoding/qgis_plugin_tools) submodule, so when cloning
 use `--recurse-submodules` like so:
-`git clone --recurse-submodules https://github.com/<organization>/<repo>.git`
+`git clone --recurse-submodules <url>/<organization>/<repo>.git`
 
 
 The code for the plugin is in the [<plugin_name>](../<plugin_name>) folder. Make sure you have required tools, such as
