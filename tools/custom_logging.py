@@ -8,7 +8,7 @@ from typing import Optional, Any, Dict
 
 from PyQt5.QtCore import QSettings
 from qgis.core import QgsMessageLog, Qgis
-from qgis.gui import QgisInterface
+from qgis.gui import QgisInterface, QgsMessageBar
 
 from .i18n import tr
 from .resources import plugin_name, plugin_path
@@ -154,8 +154,9 @@ class QgsMessageBarFilter(logging.Filter):
 class QgsMessageBarHandler(logging.Handler):
     """A logging handler that will log messages to the QGIS message bar."""
 
-    def __init__(self, iface: Optional[QgisInterface]):
-        self.iface = iface
+    def __init__(self, msg_bar: Optional[QgsMessageBar] = None):
+        self.msg_bar = msg_bar
+
         logging.Handler.__init__(self)
 
     def emit(self, record: logging.LogRecord):
@@ -166,12 +167,12 @@ class QgsMessageBarHandler(logging.Handler):
         :param record: logging record enriched with extra information from QgsMessageBarFilter
         """
         try:
-            # noinspection PyUnresolvedReferences
-            if self.iface is not None:
-                self.iface.messageBar().pushMessage(title=record.message,
-                                                    text=record.details,
-                                                    level=record.qgis_level,
-                                                    duration=record.duration)
+            if self.msg_bar is not None:
+                # noinspection PyArgumentList
+                self.msg_bar.pushMessage(title=record.message,
+                                         text=record.details,
+                                         level=record.qgis_level,
+                                         duration=record.duration)
         except MemoryError:
             pass  # This is handled in QgsLogHandler
 
@@ -216,8 +217,9 @@ def get_log_level(target: LogTarget) -> int:
 def setup_logger(logger_name: str, iface: Optional[QgisInterface] = None) -> logging.Logger:
     """Run once when the module is loaded and enable logging.
 
+
     :param logger_name: The logger name that we want to set up.
-    :param iface: QGIS Interface. Add this to enable message bar support
+    :param iface: QGIS Interface
 
     Borrowed heavily from this:
     http://docs.python.org/howto/logging-cookbook.html
@@ -265,12 +267,33 @@ def setup_logger(logger_name: str, iface: Optional[QgisInterface] = None) -> log
             iface = None
 
     if iface is not None:
-        qgis_msg_bar_handler = QgsMessageBarHandler(iface)
+        qgis_msg_bar_handler = QgsMessageBarHandler(iface.messageBar())
         qgis_msg_bar_handler.addFilter(QgsMessageBarFilter())
         qgis_msg_bar_handler.setLevel(bar_level)
         add_logging_handler_once(logger, qgis_msg_bar_handler)
 
     return logger
+
+
+def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar):
+    """
+    Remove QgsMessageBarHandler that is using the iface message bar and use custom message bar instead
+
+    :param logger_name: The logger name that we want modify
+    :param msg_bar: message bar that is inside dialog, dockwidget or in some other widget
+    :return:
+    """
+    logger = logging.getLogger(logger_name)
+    bar_level = get_log_level(LogTarget.BAR)
+
+    for handler in logger.handlers[:]:
+        if isinstance(handler, QgsMessageBarHandler):
+            logger.removeHandler(handler)
+
+    qgis_msg_bar_handler = QgsMessageBarHandler(msg_bar)
+    qgis_msg_bar_handler.addFilter(QgsMessageBarFilter())
+    qgis_msg_bar_handler.setLevel(bar_level)
+    add_logging_handler_once(logger, qgis_msg_bar_handler)
 
 
 def setup_task_logger(logger_name: str) -> logging.Logger:

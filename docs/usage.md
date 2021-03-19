@@ -5,13 +5,17 @@
 For setting up the logging (usually in main plugin file):
 ```python
 from .qgis_plugin_tools.tools.resources import plugin_name
-from .qgis_plugin_tools.tools.custom_logging import setup_logger
+from .qgis_plugin_tools.tools.custom_logging import setup_logger, use_custom_msg_bar_in_logger
 
 # Setup without message bar support
 # setup_logger(plugin_name())
 
 # Setup with QGIS interface to add message bar support
 setup_logger(plugin_name(), iface)
+
+# If you want to use dialog's message bar instead, you can setup that like this
+dialog = Dialog()  # Dialog has QgsMessageBar as message_bar
+use_custom_msg_bar_in_logger(plugin_name(), dialog.message_bar)
 ```
 
 To use the logging system:
