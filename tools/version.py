@@ -37,7 +37,7 @@ def version_from_string(version: str) -> Tuple[int, int, int]:
     :param version:
     :return:
     """
-    parts = version.split('.')
+    parts = version.split(".")
     if len(parts) != 3:
         raise QgsPluginVersionInInvalidFormat()
     return int(parts[0]), int(parts[1]), int(parts[2])
@@ -51,4 +51,4 @@ def string_from_version(version: Tuple[int, int, int]) -> str:
     """
     if len(version) != 3:
         raise QgsPluginVersionInInvalidFormat()
-    return '.'.join(map(str, version))
+    return ".".join(map(str, version))

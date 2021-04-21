@@ -1,6 +1,6 @@
 """Tools for layers."""
 
-from qgis.core import QgsProject, QgsLayerTreeUtils
+from qgis.core import QgsLayerTreeUtils, QgsProject
 
 __copyright__ = "Copyright 2019, 3Liz"
 __license__ = "GPL version 3"

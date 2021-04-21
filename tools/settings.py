@@ -2,7 +2,7 @@ from os.path import join
 from typing import Optional, Union
 
 from PyQt5.QtCore import QVariant
-from qgis.core import QgsSettings, QgsProject, QgsExpressionContextUtils
+from qgis.core import QgsExpressionContextUtils, QgsProject, QgsSettings
 
 from .exceptions import QgsPluginInvalidProjectSetting
 from .resources import plugin_name
@@ -17,8 +17,12 @@ def setting_key(*args) -> str:
     return join("/", plugin_name(), *map(str, args))
 
 
-def get_setting(key: str, default: Optional[any] = None,
-                typehint: type = None, internal: bool = True) -> Union[QVariant, str]:
+def get_setting(
+    key: str,
+    default: Optional[any] = None,
+    typehint: type = None,
+    internal: bool = True,
+) -> Union[QVariant, str]:
     """
     Get QGIS setting value plugin
 
@@ -28,14 +32,16 @@ def get_setting(key: str, default: Optional[any] = None,
     :param internal: Whether to search from only plugin settings or all
     """
     s = QgsSettings()
-    kwargs = {'defaultValue': default}
+    kwargs = {"defaultValue": default}
 
     if typehint is not None:
-        kwargs['type'] = typehint
+        kwargs["type"] = typehint
     return s.value(setting_key(key) if internal else key, **kwargs)
 
 
-def set_setting(key: str, value: Union[str, int, float, bool], internal: bool = True) -> bool:
+def set_setting(
+    key: str, value: Union[str, int, float, bool], internal: bool = True
+) -> bool:
     """
     Set a value in the QgsSetting
 
@@ -47,8 +53,12 @@ def set_setting(key: str, value: Union[str, int, float, bool], internal: bool = 
     return qs.setValue(setting_key(key) if internal else key, value)
 
 
-def get_project_setting(key: str, default: Optional[any] = None,
-                        typehint: type = None, internal: bool = True) -> Union[QVariant, str, None]:
+def get_project_setting(
+    key: str,
+    default: Optional[any] = None,
+    typehint: type = None,
+    internal: bool = True,
+) -> Union[QVariant, str, None]:
     """
     Get QGIS project setting value
 
@@ -85,7 +95,9 @@ def get_project_setting(key: str, default: Optional[any] = None,
     return value if conversion_ok else default
 
 
-def set_project_setting(key: str, value: Union[str, int, float, bool], internal: bool = True) -> bool:
+def set_project_setting(
+    key: str, value: Union[str, int, float, bool], internal: bool = True
+) -> bool:
     """
     Set a value in the QGIS project settings
 

@@ -8,17 +8,20 @@ from qgis.core import QgsRectangle
 
 def extent_to_bbox(extent: QgsRectangle, precision=2) -> str:
     """
-       Add extent for the query
+    Add extent for the query
 
-       :param extent: QgsRectangle expected to be in the right extent
-       :param precision: Precision of coordinates
-       :return: string representation xmin,ymin,xmax,ymax
-       """
-    rnd = lambda c: round(c, precision)
+    :param extent: QgsRectangle expected to be in the right extent
+    :param precision: Precision of coordinates
+    :return: string representation xmin,ymin,xmax,ymax
+    """
+
+    def rnd(c):
+        return round(c, precision)
+
     bbox = (
         rnd(extent.xMinimum()),
         rnd(extent.yMinimum()),
         rnd(extent.xMaximum()),
         rnd(extent.yMaximum()),
     )
-    return ','.join(map(str, bbox))
+    return ",".join(map(str, bbox))

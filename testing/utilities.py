@@ -6,12 +6,12 @@ import os
 import sys
 
 from osgeo import gdal
-from qgis.PyQt import Qt
 from qgis.core import Qgis
+from qgis.PyQt import Qt
 
-from .mock_qgis_classes import MockMessageBar, MainWindow
+from .mock_qgis_classes import MainWindow, MockMessageBar
 
-LOGGER = logging.getLogger('QGIS')
+LOGGER = logging.getLogger("QGIS")
 QGIS_APP = None  # Static variable used to hold hand to running QGIS app
 CANVAS = None
 PARENT = None
@@ -30,7 +30,7 @@ def pytest_report_header(config):
 
 
 def get_qgis_app():
-    """ Start one QGIS application to test against.
+    """Start one QGIS application to test against.
 
     :returns: Handle to QGIS app, canvas, new_project and parent. If there are any
         errors the tuple members will be returned as None.
@@ -43,6 +43,7 @@ def get_qgis_app():
         from PyQt5 import QtCore, QtWidgets
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
+
         from .qgis_interface import QgisInterface
     except ImportError:
         return None, None, None, None
@@ -52,8 +53,7 @@ def get_qgis_app():
     if QGIS_APP is None:
         gui_flag = True  # All test will run qgis in gui mode
         # noinspection PyPep8Naming
-        QGIS_APP = QgsApplication([bytes(arg, 'utf-8') for arg in sys.argv],
-                                  gui_flag)
+        QGIS_APP = QgsApplication([bytes(arg, "utf-8") for arg in sys.argv], gui_flag)
         # Make sure QGIS_PREFIX_PATH is set in your env if needed!
         QGIS_APP.initQgis()
         s = QGIS_APP.showSettings()
@@ -86,12 +86,16 @@ def is_running_inside_ci() -> bool:
 
 
 def is_running_in_tools_module_ci() -> bool:
-    return is_running_inside_ci() and int(os.environ.get("QGIS_PLUGIN_TOOLS_IN_CI", "0")) == 1
+    return (
+        is_running_inside_ci()
+        and int(os.environ.get("QGIS_PLUGIN_TOOLS_IN_CI", "0")) == 1
+    )
 
 
 def qgis_supports_temporal() -> bool:
     try:
-        from qgis.core import QgsRasterLayerTemporalProperties
+        from qgis.core import QgsRasterLayerTemporalProperties  # noqa F401
+
         return True
     except ImportError:
         return False

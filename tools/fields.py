@@ -1,10 +1,10 @@
 from typing import Type, Union
 
-from PyQt5.QtWidgets import (QWidget, QCheckBox, QComboBox, QDateEdit)
+from PyQt5.QtWidgets import QCheckBox, QComboBox, QDateEdit, QWidget
+from qgis.core import QgsApplication, QgsFields
+from qgis.gui import QgsDateTimeEdit, QgsDoubleSpinBox, QgsSpinBox
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QIcon
-from qgis.core import QgsApplication, QgsFields
-from qgis.gui import QgsSpinBox, QgsDoubleSpinBox, QgsDateTimeEdit
 
 __copyright__ = "Copyright 2020, Gispo"
 __license__ = "GPL version 3"
@@ -78,7 +78,7 @@ def value_for_widget(widget: Type[QWidget]) -> Union[str, bool, float, int]:
     elif isinstance(widget, QCheckBox):
         return widget.isChecked()
     elif isinstance(widget, QgsDateTimeEdit):
-        return widget.dateTime().toString('yyyy-MM-dd hh:mm:ss')
+        return widget.dateTime().toString("yyyy-MM-dd hh:mm:ss")
     elif isinstance(widget, QgsSpinBox) or isinstance(widget, QgsDoubleSpinBox):
         return widget.value()
     else:

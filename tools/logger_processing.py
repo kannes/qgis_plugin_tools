@@ -1,3 +1,4 @@
+# flake8: noqa N802
 import logging
 
 from qgis.core import QgsProcessingFeedback

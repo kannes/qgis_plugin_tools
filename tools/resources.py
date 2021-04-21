@@ -1,9 +1,9 @@
 """Tools to work with resource files."""
 
 import configparser
-from os.path import abspath, join, pardir, dirname
+from os.path import abspath, dirname, join, pardir
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 from qgis.PyQt import uic
 
@@ -64,7 +64,7 @@ def plugin_name() -> str:
             name = name.replace(" ", "").strip()
             PLUGIN_NAME = name
         except KeyError:
-            PLUGIN_NAME = 'test_plugin'
+            PLUGIN_NAME = "test_plugin"
     return PLUGIN_NAME
 
 
@@ -75,7 +75,7 @@ def slug_name() -> str:
         try:
             metadata = metadata_config()
             name: str = metadata["general"]["repository"]
-            slug = name.split('/')[-1]
+            slug = name.split("/")[-1]
             SLUG_NAME = slug
         except KeyError:
             SLUG_NAME = PLUGIN_NAME
@@ -105,16 +105,16 @@ def qgis_plugin_ci_config() -> Optional[Dict]:
     """
     Get configuration of the ci config or None
     """
-    path = root_path('.qgis-plugin-ci')
+    path = root_path(".qgis-plugin-ci")
     if not Path(path).exists():
-        path = plugin_path('.qgis-plugin-ci')
+        path = plugin_path(".qgis-plugin-ci")
     path = Path(path)
     if path.exists():
         with open(path) as f:
             config = {}
             for line in f:
-                parts = line.split(':')
-                config[parts[0]] = ':'.join(parts[1:])
+                parts = line.split(":")
+                config[parts[0]] = ":".join(parts[1:])
 
         return config
     return None

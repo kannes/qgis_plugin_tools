@@ -4,10 +4,10 @@ import logging
 from enum import Enum, unique
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Optional, Any, Dict
+from typing import Any, Dict, Optional
 
 from PyQt5.QtCore import QSettings
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface, QgsMessageBar
 
 from .i18n import tr
@@ -25,17 +25,18 @@ __revision__ = "$Format:%H$"
 @unique
 class LogTarget(Enum):
     """ Log target with default logging level as value """
-    STREAM = {'id': 'stream', 'default': 'INFO'}
-    FILE = {'id': 'file', 'default': 'INFO'}
-    BAR = {'id': 'bar', 'default': 'INFO'}
+
+    STREAM = {"id": "stream", "default": "INFO"}
+    FILE = {"id": "file", "default": "INFO"}
+    BAR = {"id": "bar", "default": "INFO"}
 
     @property
     def id(self):
-        return self.value['id']
+        return self.value["id"]
 
     @property
     def default_level(self):
-        return self.value['default']
+        return self.value["default"]
 
 
 def qgis_level(logging_level):
@@ -67,7 +68,9 @@ def qgis_level(logging_level):
     return Qgis.Info
 
 
-def bar_msg(details: Any = "", duration: Optional[int] = None, success: bool = False) -> Dict[str, str]:
+def bar_msg(
+    details: Any = "", duration: Optional[int] = None, success: bool = False
+) -> Dict[str, str]:
     """
     Helper function to construct extra arguments for message bar logger message
 
@@ -76,9 +79,9 @@ def bar_msg(details: Any = "", duration: Optional[int] = None, success: bool = F
         is set to 0, then the message must be manually dismissed by the user.
     :param success: Whether the message is success message or not
     """
-    args = {'details': str(details), 'success': success}
+    args = {"details": str(details), "success": success}
     if duration is not None:
-        args['duration'] = duration
+        args["duration"] = duration
     return args
 
 
@@ -126,7 +129,11 @@ class QgsMessageBarFilter(logging.Filter):
         if "details" not in args:
             return False
 
-        record.qgis_level = qgis_level(record.levelname) if not args.get("success", False) else Qgis.Success
+        record.qgis_level = (
+            qgis_level(record.levelname)
+            if not args.get("success", False)
+            else Qgis.Success
+        )
         record.duration = args.get("duration", self.bar_msg_duration(record.levelname))
         return True
 
@@ -169,10 +176,12 @@ class QgsMessageBarHandler(logging.Handler):
         try:
             if self.msg_bar is not None:
                 # noinspection PyArgumentList
-                self.msg_bar.pushMessage(title=record.message,
-                                         text=record.details,
-                                         level=record.qgis_level,
-                                         duration=record.duration)
+                self.msg_bar.pushMessage(
+                    title=record.message,
+                    text=record.details,
+                    level=record.qgis_level,
+                    duration=record.duration,
+                )
         except MemoryError:
             pass  # This is handled in QgsLogHandler
 
@@ -214,7 +223,9 @@ def get_log_level(target: LogTarget) -> int:
     return logging.getLevelName(get_log_level_name(target))
 
 
-def setup_logger(logger_name: str, iface: Optional[QgisInterface] = None) -> logging.Logger:
+def setup_logger(
+    logger_name: str, iface: Optional[QgisInterface] = None
+) -> logging.Logger:
     """Run once when the module is loaded and enable logging.
 
 
@@ -239,19 +250,25 @@ def setup_logger(logger_name: str, iface: Optional[QgisInterface] = None) -> log
     logger = logging.getLogger(logger_name)
     logger.setLevel(min(stream_level, file_level))
 
-    if logger_name != 'test_plugin':
-        file_formatter = logging.Formatter("%(asctime)s - [%(levelname)-7s] - %(filename)s:%(lineno)d : %(message)s",
-                                           "%d.%m.%Y %H:%M:%S")
+    if logger_name != "test_plugin":
+        file_formatter = logging.Formatter(
+            "%(asctime)s - [%(levelname)-7s] - %(filename)s:%(lineno)d : %(message)s",
+            "%d.%m.%Y %H:%M:%S",
+        )
         log_dir = Path(plugin_path("logs"))
         log_dir.mkdir(exist_ok=True)
-        file_handler = RotatingFileHandler(str(log_dir / Path(f"{logger_name}.log")), maxBytes=1024 * 1024 * 2)
+        file_handler = RotatingFileHandler(
+            str(log_dir / Path(f"{logger_name}.log")), maxBytes=1024 * 1024 * 2
+        )
         file_handler.setFormatter(file_formatter)
         file_handler.setLevel(file_level)
         add_logging_handler_once(logger, file_handler)
 
     console_handler = logging.StreamHandler()
     console_handler.setLevel(stream_level)
-    console_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s", "%d.%m.%Y %H:%M:%S")
+    console_formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(message)s", "%d.%m.%Y %H:%M:%S"
+    )
     console_handler.setFormatter(console_formatter)
     add_logging_handler_once(logger, console_handler)
 
@@ -277,7 +294,8 @@ def setup_logger(logger_name: str, iface: Optional[QgisInterface] = None) -> log
 
 def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar):
     """
-    Remove QgsMessageBarHandler that is using the iface message bar and use custom message bar instead
+    Remove QgsMessageBarHandler that is using the iface message bar
+    and use custom message bar instead
 
     :param logger_name: The logger name that we want modify
     :param msg_bar: message bar that is inside dialog, dockwidget or in some other widget
@@ -297,7 +315,7 @@ def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar):
 
 
 def setup_task_logger(logger_name: str) -> logging.Logger:
-    """ Run once when the module is loaded and enable logging during tasks.
+    """Run once when the module is loaded and enable logging during tasks.
 
     :param logger_name: The logger name that we want to set up.
     """
@@ -316,7 +334,7 @@ def setup_task_logger(logger_name: str) -> logging.Logger:
 
 
 def teardown_logger(logger_name: str) -> None:
-    """ Remove all handlers from the logger
+    """Remove all handlers from the logger
 
     :param logger_name: The logger name that we want to tear down.
     """

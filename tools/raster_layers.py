@@ -6,8 +6,14 @@ __revision__ = "$Format:%H$"
 import datetime
 
 from PyQt5.QtCore import Qt
-from qgis.core import (QgsRasterLayer, QgsRasterDataProvider, QgsSingleBandGrayRenderer, QgsRasterBandStats,
-                       QgsContrastEnhancement, QgsDateTimeRange)
+from qgis.core import (
+    QgsContrastEnhancement,
+    QgsDateTimeRange,
+    QgsRasterBandStats,
+    QgsRasterDataProvider,
+    QgsRasterLayer,
+    QgsSingleBandGrayRenderer,
+)
 
 try:
     from qgis.core import QgsRasterLayerTemporalProperties
@@ -21,11 +27,16 @@ def set_raster_renderer_to_singleband(layer: QgsRasterLayer, band: int = 1) -> N
     :param layer: raster layer
     :param band: band number starting from 1
     """
-    # https://gis.stackexchange.com/a/377631/123927 and https://gis.stackexchange.com/a/157573/123927
+    # https://gis.stackexchange.com/a/377631/123927 and
+    # https://gis.stackexchange.com/a/157573/123927
     provider: QgsRasterDataProvider = layer.dataProvider()
-    renderer: QgsSingleBandGrayRenderer = QgsSingleBandGrayRenderer(layer.dataProvider(), band)
+    renderer: QgsSingleBandGrayRenderer = QgsSingleBandGrayRenderer(
+        layer.dataProvider(), band
+    )
 
-    stats: QgsRasterBandStats = provider.bandStatistics(band, QgsRasterBandStats.All, layer.extent(), 0)
+    stats: QgsRasterBandStats = provider.bandStatistics(
+        band, QgsRasterBandStats.All, layer.extent(), 0
+    )
     min_val = max(stats.minimumValue, 0)
     max_val = max(stats.maximumValue, 0)
 
@@ -67,7 +78,11 @@ def set_band_based_on_range(layer: QgsRasterLayer, t_range: QgsDateTimeRange) ->
     """
     band_num = 1
     tprops: QgsRasterLayerTemporalProperties = layer.temporalProperties()
-    if tprops.isVisibleInTemporalRange(t_range) and t_range.begin().isValid() and t_range.end().isValid():
+    if (
+        tprops.isVisibleInTemporalRange(t_range)
+        and t_range.begin().isValid()
+        and t_range.end().isValid()
+    ):
         if tprops.mode() == QgsRasterLayerTemporalProperties.ModeFixedTemporalRange:
             layer_t_range: QgsDateTimeRange = tprops.fixedTemporalRange()
             start: datetime.datetime = layer_t_range.begin().toPyDateTime()

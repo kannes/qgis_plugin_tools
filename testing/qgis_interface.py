@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa N802
 """QGIS plugin implementation.
 
 .. note:: This program is free software; you can redistribute it and/or modify
@@ -14,24 +15,24 @@
 
 """
 
-__author__ = 'tim@linfiniti.com'
-__revision__ = '$Format:%H$'
-__date__ = '10/01/2011'
+__author__ = "tim@linfiniti.com"
+__revision__ = "$Format:%H$"
+__date__ = "10/01/2011"
 __copyright__ = (
-    'Copyright (c) 2010 by Ivan Mincik, ivan.mincik@gista.sk and '
-    'Copyright (c) 2011 German Carrillo, geotux_tuxman@linuxmail.org'
-    'Copyright (c) 2014 Tim Sutton, tim@linfiniti.com'
+    "Copyright (c) 2010 by Ivan Mincik, ivan.mincik@gista.sk and "
+    "Copyright (c) 2011 German Carrillo, geotux_tuxman@linuxmail.org"
+    "Copyright (c) 2014 Tim Sutton, tim@linfiniti.com"
 )
 
 import logging
 
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
-from qgis.core import QgsProject, QgsVectorLayer, QgsRelationManager
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+from qgis.core import QgsProject, QgsRelationManager, QgsVectorLayer
 from qgis.gui import QgsMapCanvas
 
 from .mock_qgis_classes import MockMessageBar
 
-LOGGER = logging.getLogger('QGIS')
+LOGGER = logging.getLogger("QGIS")
 
 
 # noinspection PyMethodMayBeStatic,PyPep8Naming
@@ -41,7 +42,8 @@ class QgisInterface(QObject):
     This class is here for enabling us to run unit tests only,
     so most methods are simply stubs.
     """
-    currentLayerChanged = pyqtSignal(QgsMapCanvas)
+
+    currentLayerChanged = pyqtSignal(QgsMapCanvas)  # noqa N802
 
     def __init__(self, canvas, messageBar, mainWindow):
         """Constructor
@@ -54,7 +56,7 @@ class QgisInterface(QObject):
 
         # Set up slots so we can mimic the behaviour of QGIS when layers
         # are added.
-        LOGGER.debug('Initialising canvas...')
+        LOGGER.debug("Initialising canvas...")
         # noinspection PyArgumentList
         QgsProject.instance().layersAdded.connect(self.addLayers)
         # noinspection PyArgumentList
@@ -64,7 +66,7 @@ class QgisInterface(QObject):
         self.destCrs = None
         self._layers = []
 
-    @pyqtSlot('QList<QgsMapLayer*>')
+    @pyqtSlot("QList<QgsMapLayer*>")
     def addLayers(self, layers):
         """Handle layers being added to the registry so they show up in canvas.
 

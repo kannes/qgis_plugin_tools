@@ -89,19 +89,22 @@ def parse_args():
     parser.add_argument(
         "-o",
         "--organization",
-        help="Github / Gitlab organization name. For example GispoCoding in https://github.com/GispoCoding/GlobeBuilder",
+        help="Github / Gitlab organization name. "
+        "For example GispoCoding in https://github.com/GispoCoding/GlobeBuilder",
         default="",
     )
     parser.add_argument(
         "-r",
         "--repository",
-        help="Github / Gitlab repository name. For example GlobeBuilder in https://github.com/GispoCoding/GlobeBuilder",
+        help="Github / Gitlab repository name. "
+        "For example GlobeBuilder in https://github.com/GispoCoding/GlobeBuilder",
         required=True,
     )
     parser.add_argument(
         "-u",
         "--url",
-        help="Url of the repository hosting service. Typically https://github.com or https://gitlab.com",
+        help="Url of the repository hosting service. "
+        "Typically https://github.com or https://gitlab.com",
         default="https://github.com",
     )
     parser.add_argument(

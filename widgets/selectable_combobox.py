@@ -2,7 +2,7 @@
 
 from qgis.core import QgsMapLayer
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QStandardItemModel, QStandardItem
+from qgis.PyQt.QtGui import QStandardItem, QStandardItemModel
 from qgis.PyQt.QtWidgets import QStyledItemDelegate
 
 __copyright__ = "Copyright 2019, 3Liz"

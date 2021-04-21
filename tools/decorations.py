@@ -34,6 +34,6 @@ def log_if_fails(fn):
         except QgsPluginException as e:
             LOGGER.exception(str(e), extra=e.bar_msg)
         except Exception as e:
-            LOGGER.exception(tr('Unhandled exception occurred'), extra=bar_msg(e))
+            LOGGER.exception(tr("Unhandled exception occurred"), extra=bar_msg(e))
 
     return wrapper
