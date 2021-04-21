@@ -23,6 +23,7 @@ To get started with the development, follow these steps:
    ```shell
     C:\OSGeo4W64\bin\python-qgis.bat -m venv --system-site-packages venv
    ```
+   Also in Windows, make sure that you have pip installed: `C:\OSGeo4W64\bin\python-qgis.bat -m ensurepip`
 1. Activate the virtual environment, uprade pip and install all the development dependencies:
    ```shell
    ./venv/Scripts/activate(.bat)`
