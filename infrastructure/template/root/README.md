@@ -1,9 +1,10 @@
 # <plugin_name>
-![](https://github.com/<organization>/<repo>/workflows/Tests/badge.svg)
-![](https://github.com/<organization>/<repo>/workflows/TestsLTR/badge.svg)
+![tests](https://github.com/<organization>/<repo>/workflows/Tests/badge.svg)
+![testsltr](https://github.com/<organization>/<repo>/workflows/TestsLTR/badge.svg)
+![release](https://github.com/<organization>/<repo>/workflows/Release/badge.svg)
 [![codecov.io](https://codecov.io/github/<organization>/<repo>/coverage.svg?branch=master)](https://codecov.io/github/<organization>/<repo>?branch=master)
-![](https://github.com/<organization>/<repo>/workflows/Release/badge.svg)
-
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ### Development
 

@@ -1,5 +1,7 @@
 # QGIS Plugin tools
 ![](https://github.com/GispoCoding/qgis_plugin_tools/workflows/Tests/badge.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 
 
 **Warning: The API is not stable yet. Function and files may move between commits.**
@@ -26,7 +28,7 @@ The module is helping you with:
 This will create needed structure for your plugin
 
 1. Create new repository in Github/Gitlab (here using: https://github.com/GispoCoding/test-plugin-name)
-2. Follow these steps
+1. Follow these steps
     ```shell script
     mkdir test-plugin-name
     cd test-plugin-name
@@ -41,12 +43,15 @@ This will create needed structure for your plugin
     # Create the plugin template. Replace with your information
     python creator.py -o GispoCoding -r test-plugin-name -u https://github.com
     rm creator.py
+    cd ..
     ```
-3. Now edit metadata.txt with description etc. and commit changes.
+1. Next set up the [development environment](infrastructure/template/root/docs/development.md#Setting-up-development-environment),
+   edit metadata.txt with description etc. and commit changes.
 
 ### For existing plugin
 1. Go to the root folder of your plugin code source
-2. `git submodule add https://github.com/GispoCoding/qgis_plugin_tools.git`
+1. `git submodule add https://github.com/GispoCoding/qgis_plugin_tools.git`
+1. To get most out of the submodule, try to refactor the plugin to use the default [plugin tree](Plugin-tree-example)
 
 
 ### Setting up development environment
