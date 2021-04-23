@@ -6,7 +6,7 @@ from qgis.gui import QgsDateTimeEdit, QgsDoubleSpinBox, QgsSpinBox
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QIcon
 
-__copyright__ = "Copyright 2020, Gispo"
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"

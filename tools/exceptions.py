@@ -1,4 +1,4 @@
-__copyright__ = "Copyright 2020, Gispo Ltd"
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 2"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"

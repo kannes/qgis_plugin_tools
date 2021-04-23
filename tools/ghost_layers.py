@@ -3,7 +3,7 @@ from typing import List
 
 from qgis.core import QgsLayerTreeUtils, QgsMapLayer, QgsProject
 
-__copyright__ = "Copyright 2019, 3Liz"
+__copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"

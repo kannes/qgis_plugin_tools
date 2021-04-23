@@ -12,7 +12,7 @@ from zipfile import ZipFile
 
 from ..tools.resources import plugin_name, plugin_path, resources_path
 
-__copyright__ = "Copyright 2020, Gispo Ltd"
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
