@@ -105,10 +105,10 @@ def qgis_plugin_ci_config() -> Optional[Dict]:
     """
     Get configuration of the ci config or None
     """
-    path = root_path(".qgis-plugin-ci")
-    if not Path(path).exists():
-        path = plugin_path(".qgis-plugin-ci")
-    path = Path(path)
+    path_str = root_path(".qgis-plugin-ci")
+    if not Path(path_str).exists():
+        path_str = plugin_path(".qgis-plugin-ci")
+    path = Path(path_str)
     if path.exists():
         with open(path) as f:
             config = {}

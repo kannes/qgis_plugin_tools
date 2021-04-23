@@ -1,5 +1,5 @@
 from os.path import join
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from PyQt5.QtCore import QVariant
 from qgis.core import QgsExpressionContextUtils, QgsProject, QgsSettings
@@ -19,7 +19,7 @@ def setting_key(*args) -> str:
 
 def get_setting(
     key: str,
-    default: Optional[any] = None,
+    default: Optional[Any] = None,
     typehint: type = None,
     internal: bool = True,
 ) -> Union[QVariant, str]:
@@ -55,7 +55,7 @@ def set_setting(
 
 def get_project_setting(
     key: str,
-    default: Optional[any] = None,
+    default: Optional[Any] = None,
     typehint: type = None,
     internal: bool = True,
 ) -> Union[QVariant, str, None]:
@@ -120,7 +120,7 @@ def parse_value(value: Union[QVariant, str]) -> Union[None, str, bool]:
     :param value: QVariant
     """
     str_value = str(value)
-    val = str_value
+    val: Union[None, str, bool] = str_value
     if str_value == "NULL":
         val = None
     elif str_value == "true":

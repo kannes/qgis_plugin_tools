@@ -4,7 +4,7 @@ import logging
 from enum import Enum, unique
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from PyQt5.QtCore import QSettings
 from qgis.core import Qgis, QgsMessageLog
@@ -70,7 +70,7 @@ def qgis_level(logging_level):
 
 def bar_msg(
     details: Any = "", duration: Optional[int] = None, success: bool = False
-) -> Dict[str, str]:
+) -> Dict[str, Any]:
     """
     Helper function to construct extra arguments for message bar logger message
 
@@ -131,12 +131,12 @@ class QgsMessageBarFilter(logging.Filter):
         if "details" not in args:
             return False
 
-        record.qgis_level = (
+        record.qgis_level = (  # type: ignore
             qgis_level(record.levelname)
             if not args.get("success", False)
             else Qgis.Success
         )
-        record.duration = args.get("duration", self.bar_msg_duration(record.levelname))
+        record.duration = args.get("duration", self.bar_msg_duration(record.levelname))  # type: ignore
         return True
 
     @staticmethod
@@ -181,9 +181,9 @@ class QgsMessageBarHandler(logging.Handler):
                 # noinspection PyArgumentList
                 self.msg_bar.pushMessage(
                     title=record.message,
-                    text=record.details,
-                    level=record.qgis_level,
-                    duration=record.duration,
+                    text=record.details,  # type: ignore
+                    level=record.qgis_level,  # type: ignore
+                    duration=record.duration,  # type: ignore
                 )
         except MemoryError:
             pass  # This is handled in QgsLogHandler
@@ -282,7 +282,7 @@ def setup_logger(
 
     if iface is None:
         try:
-            from qgis.utils import iface
+            from qgis.utils import iface  # type: ignore
         except ImportError:
             iface = None
 

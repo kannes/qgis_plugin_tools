@@ -191,7 +191,7 @@ class QgisInterface(QObject):
 
         In case of QGIS it returns an instance of QgisApp.
         """
-        pass
+        return self._mainWindow
 
     def addDockWidget(self, area, dock_widget):
         """Add a dock widget to the main window.
@@ -211,9 +211,6 @@ class QgisInterface(QObject):
     def messageBar(self) -> MockMessageBar:
         """Get the messagebar"""
         return self._messageBar
-
-    def mainWindow(self):
-        return self._mainWindow
 
     def getMockLayers(self):
         return self._layers
