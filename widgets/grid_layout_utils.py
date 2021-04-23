@@ -9,7 +9,7 @@ __revision__ = "$Format:%H$"
 https://stackoverflow.com/a/19256990/10068922 """
 
 
-def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True):
+def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True) -> None:
     """
     Removes the contents of the given layout row.
 
@@ -23,7 +23,9 @@ def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True):
     layout.setRowStretch(row, 0)
 
 
-def remove_column(layout: QGridLayout, column: int, delete_widgets: bool = True):
+def remove_column(
+    layout: QGridLayout, column: int, delete_widgets: bool = True
+) -> None:
     """
     Removes the contents of the given layout column.
 
@@ -39,7 +41,7 @@ def remove_column(layout: QGridLayout, column: int, delete_widgets: bool = True)
 
 def remove_cell(
     layout: QGridLayout, row: int, column: int, delete_widgets: bool = True
-):
+) -> None:
     """
     Removes the contents of the given layout cell.
 
@@ -52,7 +54,7 @@ def remove_cell(
     _remove(layout, row, column, delete_widgets)
 
 
-def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool):
+def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool) -> None:
     for i in reversed(range(1, layout.count())):
         r, c, rs, cs = layout.getItemPosition(i)
         if (row == -1 or (r <= row < r + rs)) and (
@@ -70,7 +72,7 @@ def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool):
             del item
 
 
-def _delete_child_widgets(item: QLayoutItem):
+def _delete_child_widgets(item: QLayoutItem) -> None:
     """
     Deletes all child widgets of the given layout item.
 

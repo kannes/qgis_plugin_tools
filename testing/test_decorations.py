@@ -8,7 +8,7 @@ from qgis.core import Qgis
 from ..tools.custom_logging import bar_msg
 from ..tools.decorations import log_if_fails
 from ..tools.exceptions import QgsPluginNotImplementedException
-from .conftest import IFACE
+from .conftest import IFACE  # type: ignore
 
 
 class MockClass:

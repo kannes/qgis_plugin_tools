@@ -17,8 +17,8 @@ try:
     import requests
     from requests.exceptions import RequestException
 except ImportError:
-    requests = None
-    RequestException = None
+    requests = None  # type: ignore
+    RequestException = None  # type: ignore
 
 __copyright__ = "Copyright 2020, Gispo Ltd"
 __license__ = "GPL version 3"
@@ -108,7 +108,7 @@ def download_to_file(
     :return: Path to the file
     """
 
-    def get_output(default_filename) -> Path:
+    def get_output(default_filename: str) -> Path:
         if output_name is None:
             if default_filename != "":
                 out_name = default_filename
@@ -134,10 +134,12 @@ def download_to_file(
                         tr("Request failed with status code {}", r.status_code),
                         bar_msg=bar_msg(r.text),
                     )
-                default_filename = re.findall(
+                default_filenames = re.findall(
                     "filename=(.+)", r.headers.get(CONTENT_DISPOSITION_HEADER, "")
                 )
-                default_filename = default_filename[0] if len(default_filename) else ""
+                default_filename = (
+                    default_filenames[0] if len(default_filenames) else ""
+                )
                 output = get_output(default_filename)
                 with open(output, "wb") as f:
                     shutil.copyfileobj(r.raw, f)

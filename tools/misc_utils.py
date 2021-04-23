@@ -6,7 +6,7 @@ __revision__ = "$Format:%H$"
 from qgis.core import QgsRectangle
 
 
-def extent_to_bbox(extent: QgsRectangle, precision=2) -> str:
+def extent_to_bbox(extent: QgsRectangle, precision: int = 2) -> str:
     """
     Add extent for the query
 
@@ -15,7 +15,7 @@ def extent_to_bbox(extent: QgsRectangle, precision=2) -> str:
     :return: string representation xmin,ymin,xmax,ymax
     """
 
-    def rnd(c):
+    def rnd(c: float) -> float:
         return round(c, precision)
 
     bbox = (

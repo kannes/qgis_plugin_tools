@@ -14,7 +14,7 @@ class QgsPluginException(Exception):
 
     def __init__(
         self, message: Optional[str] = None, bar_msg: Optional[Dict[str, str]] = None
-    ):
+    ) -> None:
         """
         Initializes the exception with custom bar_msg to be shown in message bar
         :param message: Title of the message

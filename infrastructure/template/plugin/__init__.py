@@ -1,5 +1,7 @@
 import os  # noqa F401
 
+from qgis.gui import QgisInterface
+
 # <commented_out>from .qgis_plugin_tools.infrastructure.debugging import setup_pydevd
 
 # <commented_out>if os.environ.get("QGIS_PLUGIN_USE_DEBUGGER") == "pydevd":
@@ -10,7 +12,7 @@ import os  # noqa F401
 # <commented_out>        setup_pydevd()
 
 
-def classFactory(iface):  # noqa N802
+def classFactory(iface: QgisInterface):  # noqa N802
     from .plugin import Plugin
 
     return Plugin(iface)

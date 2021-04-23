@@ -4,6 +4,7 @@ __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
 import logging
+from typing import Any, Callable
 
 from .custom_logging import bar_msg
 from .exceptions import QgsPluginException
@@ -13,14 +14,14 @@ from .resources import plugin_name
 LOGGER = logging.getLogger(plugin_name())
 
 
-def log_if_fails(fn):
+def log_if_fails(fn: Callable) -> Callable:
     """
     Use this as a decorator with class methods that might throw uncaught exceptions
     """
     from functools import wraps
 
     @wraps(fn)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN001
         try:
             if args and args != (False,):
                 if len(kwargs):

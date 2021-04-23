@@ -26,7 +26,7 @@ To get started with the development, follow these steps:
    Also in Windows, make sure that you have pip installed: `C:\OSGeo4W64\bin\python-qgis.bat -m ensurepip`
 1. Activate the virtual environment, uprade pip and install all the development dependencies:
    ```shell
-   ./venv/Scripts/activate(.bat)`
+   source venv/bin/activate # On Windows ./venv/Scripts/activate.bat`
    python -m pip install --upgrade pip
    python -m pip install -r requirements-dev.txt
    ```
@@ -36,6 +36,9 @@ To get started with the development, follow these steps:
    ```
 
 Now the development environment should be all-set.
+
+If you want to edit or disable some quite strict pre-commit scripts, edit .pre-commit-config.yaml.
+For example to disable typing, remove mypy hook and flake8-annotations from the file.
 
 
 ## Adding or editing  source files

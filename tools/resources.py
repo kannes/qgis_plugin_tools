@@ -3,7 +3,7 @@
 import configparser
 from os.path import abspath, dirname, join, pardir
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from qgis.PyQt import uic
 
@@ -16,7 +16,7 @@ PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""
 
 
-def plugin_path(*args) -> str:
+def plugin_path(*args: str) -> str:
     """Get the path to plugin root folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -33,7 +33,7 @@ def plugin_path(*args) -> str:
     return path
 
 
-def root_path(*args) -> str:
+def root_path(*args: str) -> str:
     """Get the path to plugin root folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -120,7 +120,7 @@ def qgis_plugin_ci_config() -> Optional[Dict]:
     return None
 
 
-def plugin_test_data_path(*args) -> str:
+def plugin_test_data_path(*args: str) -> str:
     """Get the path to the plugin test data path.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -136,7 +136,7 @@ def plugin_test_data_path(*args) -> str:
     return path
 
 
-def resources_path(*args) -> str:
+def resources_path(*args: str) -> str:
     """Get the path to our resources folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -152,7 +152,7 @@ def resources_path(*args) -> str:
     return path
 
 
-def load_ui(*args):
+def load_ui(*args: str) -> Any:
     """Get compile UI file.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']

@@ -1,5 +1,5 @@
 """QListWidget with fields selection."""
-
+# flake8: noqa ANN001, ANN204, ANN201
 from qgis.core import QgsVectorLayer
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QAbstractItemView, QListWidget, QListWidgetItem

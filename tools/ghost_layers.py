@@ -1,6 +1,7 @@
 """Tools for layers."""
+from typing import List
 
-from qgis.core import QgsLayerTreeUtils, QgsProject
+from qgis.core import QgsLayerTreeUtils, QgsMapLayer, QgsProject
 
 __copyright__ = "Copyright 2019, 3Liz"
 __license__ = "GPL version 3"
@@ -8,7 +9,7 @@ __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
 
-def is_ghost_layer(layer):
+def is_ghost_layer(layer: QgsMapLayer) -> bool:
     """Check if the given layer is a ghost layer or not.
 
     A ghost layer is included in the QgsProject list of layers
@@ -27,7 +28,7 @@ def is_ghost_layer(layer):
     return count == 0
 
 
-def remove_all_ghost_layers():
+def remove_all_ghost_layers() -> List[QgsMapLayer]:
     """Remove all ghost layers from project.
 
     :return: The list of layers name which have been removed.

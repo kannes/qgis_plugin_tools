@@ -1,3 +1,4 @@
+# flake8: noqa ANN201
 import argparse
 import os
 import shutil

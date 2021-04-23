@@ -4,7 +4,7 @@ import logging
 from enum import Enum, unique
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from PyQt5.QtCore import QSettings
 from qgis.core import Qgis, QgsMessageLog
@@ -31,15 +31,15 @@ class LogTarget(Enum):
     BAR = {"id": "bar", "default": "INFO"}
 
     @property
-    def id(self):
+    def id(self) -> str:
         return self.value["id"]
 
     @property
-    def default_level(self):
+    def default_level(self) -> str:
         return self.value["default"]
 
 
-def qgis_level(logging_level):
+def qgis_level(logging_level: str) -> int:
     """Check for the corresponding QGIS Level according to Logging Level.
 
     For QGIS:
@@ -89,10 +89,10 @@ def bar_msg(
 class QgsLogHandler(logging.Handler):
     """A logging handler that will log messages to the QGIS logging console"""
 
-    def __init__(self, level=logging.NOTSET):
+    def __init__(self, level: int = logging.NOTSET) -> None:
         logging.Handler.__init__(self)
 
-    def emit(self, record):
+    def emit(self, record: logging.LogRecord) -> None:
         """Try to log the message to QGIS if available, otherwise do nothing.
 
         :param record: logging record containing whatever info needs to be
@@ -126,7 +126,7 @@ class QgsMessageBarFilter(logging.Filter):
             Whether the message is success message or not
     """
 
-    def filter(self, record: logging.LogRecord):
+    def filter(self, record: logging.LogRecord) -> bool:
         args = record.__dict__
         if "details" not in args:
             return False
@@ -136,7 +136,7 @@ class QgsMessageBarFilter(logging.Filter):
             if not args.get("success", False)
             else Qgis.Success
         )
-        record.duration = args.get("duration", self.bar_msg_duration(record.levelname))  # type: ignore
+        record.duration = args.get("duration", self.bar_msg_duration(record.levelname))  # type: ignore # noqa E501
         return True
 
     @staticmethod
@@ -163,12 +163,12 @@ class QgsMessageBarFilter(logging.Filter):
 class QgsMessageBarHandler(logging.Handler):
     """A logging handler that will log messages to the QGIS message bar."""
 
-    def __init__(self, msg_bar: Optional[QgsMessageBar] = None):
+    def __init__(self, msg_bar: Optional[QgsMessageBar] = None) -> None:
         self.msg_bar = msg_bar
 
         logging.Handler.__init__(self)
 
-    def emit(self, record: logging.LogRecord):
+    def emit(self, record: logging.LogRecord) -> None:
         """
         Push info message to the QGIS message bar. Pass "extra" kwarg
         to logger to use with mandatory "details" key.
@@ -189,7 +189,7 @@ class QgsMessageBarHandler(logging.Handler):
             pass  # This is handled in QgsLogHandler
 
 
-def add_logging_handler_once(logger, handler) -> bool:
+def add_logging_handler_once(logger: logging.Logger, handler: logging.Handler) -> bool:
     """A helper to add a handler to a logger, ensuring there are no duplicates.
 
     :param logger: Logger that should have a handler added.
@@ -295,7 +295,7 @@ def setup_logger(
     return logger
 
 
-def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar):
+def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar) -> None:
     """
     Remove QgsMessageBarHandler that is using the iface message bar
     and use custom message bar instead

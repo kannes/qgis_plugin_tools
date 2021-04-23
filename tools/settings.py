@@ -8,7 +8,7 @@ from .exceptions import QgsPluginInvalidProjectSetting
 from .resources import plugin_name
 
 
-def setting_key(*args) -> str:
+def setting_key(*args: str) -> str:
     """
     Get QGIS setting key
 

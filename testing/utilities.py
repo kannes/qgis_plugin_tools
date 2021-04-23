@@ -18,7 +18,7 @@ PARENT = None
 IFACE = None
 
 
-def pytest_report_header(config):
+def pytest_report_header(config) -> str:  # noqa: ANN001
     """Used by PyTest and Unittest."""
     # noinspection PyUnresolvedReferences
     message = "QGIS : {}\n".format(Qgis.QGIS_VERSION_INT)
@@ -29,7 +29,8 @@ def pytest_report_header(config):
     return message
 
 
-def get_qgis_app():
+# noinspection PyUnresolvedReferences
+def get_qgis_app():  # noqa
     """Start one QGIS application to test against.
 
     :returns: Handle to QGIS app, canvas, new_project and parent. If there are any

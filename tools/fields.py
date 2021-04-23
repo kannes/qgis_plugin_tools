@@ -85,7 +85,7 @@ def value_for_widget(widget: Type[QWidget]) -> Union[str, bool, float, int]:
         return str(widget.text())
 
 
-def provider_fields(fields):
+def provider_fields(fields: QgsFields) -> QgsFields:
     flds = QgsFields()
     for i in range(fields.count()):
         if fields.fieldOrigin(i) == QgsFields.OriginProvider:

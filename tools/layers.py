@@ -59,12 +59,14 @@ class LayerType(enum.Enum):
     Point = {"wkb_types": POINT_TYPES}
     Line = {"wkb_types": LINE_TYPES}
     Polygon = {"wkb_types": POLYGON_TYPES}
+    Unknown = {}  # type: ignore
 
     @staticmethod
     def from_layer(layer: QgsVectorLayer) -> "LayerType":
         for l_type in LayerType:
             if layer.wkbType() in l_type.wkb_types:
                 return l_type
+        return LayerType.Unknown
 
     @property
     def wkb_types(self) -> Set[QgsWkbTypes.GeometryType]:
