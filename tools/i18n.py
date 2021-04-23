@@ -1,21 +1,23 @@
 """I18n tools."""
 
 from os.path import join
-from typing import Tuple, Optional, Any
+from typing import Any, Optional, Tuple
 
-from qgis.PyQt.QtCore import QLocale, QFileInfo
-from qgis.PyQt.QtWidgets import QApplication
 from qgis.core import QgsSettings
+from qgis.PyQt.QtCore import QFileInfo, QLocale
+from qgis.PyQt.QtWidgets import QApplication
 
-from .resources import resources_path, plugin_name, plugin_path, slug_name
+from .resources import plugin_name, plugin_path, resources_path, slug_name
 
-__copyright__ = "Copyright 2019, 3Liz"
+__copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
 
-def setup_translation(file_pattern: str = "{}.qm", folder: Optional[str] = None) -> Tuple[str, Optional[str]]:
+def setup_translation(
+    file_pattern: str = "{}.qm", folder: Optional[str] = None
+) -> Tuple[str, Optional[str]]:
     """Find the translation file according to locale.
 
     :param file_pattern: Custom file pattern to use to find QM files.
@@ -29,8 +31,8 @@ def setup_translation(file_pattern: str = "{}.qm", folder: Optional[str] = None)
     """
     locale = QgsSettings().value("locale/userLocale", QLocale().name())
 
-    for prefix in ['', f'{plugin_name()}_', f'{slug_name()}_']:
-        for fldr in [folder, plugin_path('i18n'), resources_path("i18n")]:
+    for prefix in ["", f"{plugin_name()}_", f"{slug_name()}_"]:
+        for fldr in [folder, plugin_path("i18n"), resources_path("i18n")]:
             prefixed_locale = prefix + locale
             if fldr:
                 ts_file = QFileInfo(join(fldr, file_pattern.format(prefixed_locale)))
@@ -46,7 +48,11 @@ def setup_translation(file_pattern: str = "{}.qm", folder: Optional[str] = None)
     return locale, None
 
 
-def tr(text: str, *args: Any, context: str = "@default", ) -> str:
+def tr(
+    text: str,
+    *args: Any,
+    context: str = "@default",
+) -> str:
     """Get the translation for a string using Qt translation API.
 
     We implement this ourselves since we do not inherit QObject.

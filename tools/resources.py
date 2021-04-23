@@ -1,13 +1,13 @@
 """Tools to work with resource files."""
 
 import configparser
-from os.path import abspath, join, pardir, dirname
+from os.path import abspath, dirname, join, pardir
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Any, Dict, Optional
 
 from qgis.PyQt import uic
 
-__copyright__ = "Copyright 2019, 3Liz"
+__copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
@@ -16,7 +16,7 @@ PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""
 
 
-def plugin_path(*args) -> str:
+def plugin_path(*args: str) -> str:
     """Get the path to plugin root folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -33,7 +33,7 @@ def plugin_path(*args) -> str:
     return path
 
 
-def root_path(*args) -> str:
+def root_path(*args: str) -> str:
     """Get the path to plugin root folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -64,7 +64,7 @@ def plugin_name() -> str:
             name = name.replace(" ", "").strip()
             PLUGIN_NAME = name
         except KeyError:
-            PLUGIN_NAME = 'test_plugin'
+            PLUGIN_NAME = "test_plugin"
     return PLUGIN_NAME
 
 
@@ -75,7 +75,7 @@ def slug_name() -> str:
         try:
             metadata = metadata_config()
             name: str = metadata["general"]["repository"]
-            slug = name.split('/')[-1]
+            slug = name.split("/")[-1]
             SLUG_NAME = slug
         except KeyError:
             SLUG_NAME = PLUGIN_NAME
@@ -105,22 +105,22 @@ def qgis_plugin_ci_config() -> Optional[Dict]:
     """
     Get configuration of the ci config or None
     """
-    path = root_path('.qgis-plugin-ci')
-    if not Path(path).exists():
-        path = plugin_path('.qgis-plugin-ci')
-    path = Path(path)
+    path_str = root_path(".qgis-plugin-ci")
+    if not Path(path_str).exists():
+        path_str = plugin_path(".qgis-plugin-ci")
+    path = Path(path_str)
     if path.exists():
         with open(path) as f:
             config = {}
             for line in f:
-                parts = line.split(':')
-                config[parts[0]] = ':'.join(parts[1:])
+                parts = line.split(":")
+                config[parts[0]] = ":".join(parts[1:])
 
         return config
     return None
 
 
-def plugin_test_data_path(*args) -> str:
+def plugin_test_data_path(*args: str) -> str:
     """Get the path to the plugin test data path.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -136,7 +136,7 @@ def plugin_test_data_path(*args) -> str:
     return path
 
 
-def resources_path(*args) -> str:
+def resources_path(*args: str) -> str:
     """Get the path to our resources folder.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
@@ -152,7 +152,7 @@ def resources_path(*args) -> str:
     return path
 
 
-def load_ui(*args):
+def load_ui(*args: str) -> Any:
     """Get compile UI file.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']

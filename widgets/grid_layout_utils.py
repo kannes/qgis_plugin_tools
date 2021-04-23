@@ -1,14 +1,15 @@
 from PyQt5.QtWidgets import QGridLayout, QLayoutItem
 
-__copyright__ = 'Copyright 2020, Gispo ltd'
-__license__ = 'GPL version 3'
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
+__license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
-__revision__ = '$Format:%H$'
+__revision__ = "$Format:%H$"
 
-""" Removing functionality adapted from C example https://stackoverflow.com/a/19256990/10068922 """
+""" Removing functionality adapted from C example
+https://stackoverflow.com/a/19256990/10068922 """
 
 
-def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True):
+def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True) -> None:
     """
     Removes the contents of the given layout row.
 
@@ -22,7 +23,9 @@ def remove_row(layout: QGridLayout, row: int, delete_widgets: bool = True):
     layout.setRowStretch(row, 0)
 
 
-def remove_column(layout: QGridLayout, column: int, delete_widgets: bool = True):
+def remove_column(
+    layout: QGridLayout, column: int, delete_widgets: bool = True
+) -> None:
     """
     Removes the contents of the given layout column.
 
@@ -36,7 +39,9 @@ def remove_column(layout: QGridLayout, column: int, delete_widgets: bool = True)
     layout.setColumnStretch(column, 0)
 
 
-def remove_cell(layout: QGridLayout, row: int, column: int, delete_widgets: bool = True):
+def remove_cell(
+    layout: QGridLayout, row: int, column: int, delete_widgets: bool = True
+) -> None:
     """
     Removes the contents of the given layout cell.
 
@@ -49,12 +54,11 @@ def remove_cell(layout: QGridLayout, row: int, column: int, delete_widgets: bool
     _remove(layout, row, column, delete_widgets)
 
 
-def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool):
+def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool) -> None:
     for i in reversed(range(1, layout.count())):
         r, c, rs, cs = layout.getItemPosition(i)
-        if (
-            (row == -1 or (r <= row < r + rs)) and
-            (column == -1 or (c <= column < c + cs))
+        if (row == -1 or (r <= row < r + rs)) and (
+            column == -1 or (c <= column < c + cs)
         ):
             item: QLayoutItem = layout.takeAt(i)
 
@@ -68,7 +72,7 @@ def _remove(layout: QGridLayout, row: int, column: int, delete_widgets: bool):
             del item
 
 
-def _delete_child_widgets(item: QLayoutItem):
+def _delete_child_widgets(item: QLayoutItem) -> None:
     """
     Deletes all child widgets of the given layout item.
 
@@ -87,4 +91,4 @@ def _delete_child_widgets(item: QLayoutItem):
         widget.setParent(None)
         widget = None
     del item
-    item = None
+    item = None  # noqa F841

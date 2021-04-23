@@ -1,10 +1,11 @@
-__copyright__ = "Copyright 2020, Gispo Ltd"
+# flake8: noqa E501
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
 
-def setup_pydevd(host: str = 'localhost', port: int = 5678) -> bool:
+def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
     """
     Setup pydevd degugging service
 
@@ -37,7 +38,7 @@ def setup_pydevd(host: str = 'localhost', port: int = 5678) -> bool:
         pydevd.settrace(host, port=port, stdoutToServer=True, stderrToServer=True)
         succeeded = True
     except Exception as e:
-        print('Unable to create pydevd debugger: {}'.format(e))
+        print("Unable to create pydevd debugger: {}".format(e))
 
     return succeeded
 
@@ -53,8 +54,9 @@ def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
     succeeded = False
     try:
         import debugpy
+
         debugpy.listen((host, port))
         succeeded = True
     except Exception as e:
-        print('Unable to create debugpy debugger: {}'.format(e))
+        print("Unable to create debugpy debugger: {}".format(e))
     return succeeded

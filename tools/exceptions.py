@@ -1,4 +1,4 @@
-__copyright__ = "Copyright 2020, Gispo Ltd"
+__copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 2"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
@@ -8,10 +8,13 @@ from typing import Dict, Optional
 
 class QgsPluginException(Exception):
     """ Use this as a base exception class in custom exceptions """
-    # Override default_msg to set default message in inherited classes
-    default_msg = ''
 
-    def __init__(self, message: Optional[str] = None, bar_msg: Optional[Dict[str, str]] = None):
+    # Override default_msg to set default message in inherited classes
+    default_msg = ""
+
+    def __init__(
+        self, message: Optional[str] = None, bar_msg: Optional[Dict[str, str]] = None
+    ) -> None:
         """
         Initializes the exception with custom bar_msg to be shown in message bar
         :param message: Title of the message
