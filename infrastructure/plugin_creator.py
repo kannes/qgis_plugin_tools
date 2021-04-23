@@ -15,6 +15,7 @@ TEMPLATE_PLUGIN_DIR = os.path.join(TEMPLATE_DIR, "plugin")
 ROOT_FILES = [
     ".qgis-plugin-ci",
     ".pre-commit-config.yaml",
+    ".editorconfig",
     "setup.cfg",
     "requirements-dev.txt",
     "README.md",
@@ -39,7 +40,6 @@ PLUGIN_FILES = [
     "build.py",
     "__init__.py",
     "plugin.py",
-    ".editorconfig",
     ".gitattributes",
     "resources/ui/.gitignore",
     "resources/i18n/.gitignore",

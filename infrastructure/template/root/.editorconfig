@@ -9,9 +9,6 @@ insert_final_newline = true
 [*.py]
 indent_style = space
 indent_size = 4
-# Black compatible values for isort https://black.readthedocs.io/en/stable/compatible_configs.html#isort
-profile = black
-multi_line_output = 3
 
 [*.ui]
 indent_style = space
