@@ -75,8 +75,9 @@ def bar_msg(
     Helper function to construct extra arguments for message bar logger message
 
     :param details: Longer body of the message. Can be set to empty string.
-    :param duration: can be used to specify the message timeout in seconds. If ``duration``
-        is set to 0, then the message must be manually dismissed by the user.
+    :param duration: can be used to specify the message timeout in seconds. If
+        ``duration`` is set to 0, then the message must be manually dismissed
+        by the user.
     :param success: Whether the message is success message or not
     """
     args = {"details": str(details), "success": success}
@@ -86,7 +87,7 @@ def bar_msg(
 
 
 class QgsLogHandler(logging.Handler):
-    """A logging handler that will log messages to the QGIS logging console."""
+    """A logging handler that will log messages to the QGIS logging console"""
 
     def __init__(self, level=logging.NOTSET):
         logging.Handler.__init__(self)
@@ -121,7 +122,8 @@ class QgsMessageBarFilter(logging.Filter):
         details: Longer body of the message. Can be set to empty string.
         duration: can be used to specify the message timeout in seconds. If ``duration``
             is set to 0, then the message must be manually dismissed by the user.
-        success: boolean, defaults to False. Whether the message is success message or not
+        success: boolean, defaults to False.
+            Whether the message is success message or not
     """
 
     def filter(self, record: logging.LogRecord):
@@ -168,10 +170,11 @@ class QgsMessageBarHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord):
         """
-        Push info message to the QGIS message bar. Pass "extra" kwarg to logger to use with
-        mandatory "details" key.
+        Push info message to the QGIS message bar. Pass "extra" kwarg
+        to logger to use with mandatory "details" key.
 
-        :param record: logging record enriched with extra information from QgsMessageBarFilter
+        :param record: logging record enriched with extra information from
+            QgsMessageBarFilter
         """
         try:
             if self.msg_bar is not None:
@@ -298,7 +301,8 @@ def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar):
     and use custom message bar instead
 
     :param logger_name: The logger name that we want modify
-    :param msg_bar: message bar that is inside dialog, dockwidget or in some other widget
+    :param msg_bar: message bar that is inside dialog, dockwidget or
+        in some other widget
     :return:
     """
     logger = logging.getLogger(logger_name)

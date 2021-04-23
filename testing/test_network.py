@@ -20,7 +20,8 @@ def test_fetch_invalid_url(new_project):
 
 
 @pytest.mark.skip(
-    "file does not exist. TODO: search another file to be used using Content-Disposition"
+    "file does not exist. "
+    "TODO: search another file to be used using Content-Disposition"
 )
 def test_download_to_file(new_project, tmpdir):
     path_to_file = download_to_file(
@@ -33,7 +34,8 @@ def test_download_to_file(new_project, tmpdir):
 
 
 @pytest.mark.skip(
-    "file does not exist. TODO: search another file to be used using Content-Disposition"
+    "file does not exist. "
+    "TODO: search another file to be used using Content-Disposition"
 )
 def test_download_to_file_without_requests(new_project, tmpdir):
     path_to_file = download_to_file(

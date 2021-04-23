@@ -11,5 +11,5 @@ This class contains fixtures and common helper function to keep the test files s
 # <commented_out>
 # <commented_out>@pytest.fixture(scope="function")
 # <commented_out>def new_project() -> None:
-# <commented_out>    """Initializes new QGIS project by removing layers and relations etc."""
+# <commented_out>    """Initializes new QGIS project by removing layers and relations etc.""" # noqa E501
 # <commented_out>    yield IFACE.newProject()

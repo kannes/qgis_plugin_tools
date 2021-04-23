@@ -118,7 +118,8 @@ Commands:
      clean          Cleans resources
      compile        Compiles resources to resources.py
      deploy         Deploys the plugin to the QGIS plugin directory ({self.plugin_dir})
-     package        Builds a package that can be uploaded to Github releases or to the plugin
+     package        Builds a package that can be uploaded to Github releases
+                    or to the plugin repository
      transup        Search for new strings to be translated
      transcompile   Compile translation files to .qm files.
 Put -h after command to see available optional arguments if any
