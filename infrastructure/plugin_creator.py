@@ -70,10 +70,16 @@ class QgisEnvBuilder(EnvBuilder):
         # This part applied from Python 3.9 EnvBuilder.upgrade_dependencies
         if sys.platform == "win32":
             python_exe = os.path.join(context.bin_path, "python.exe")
+            env = os.environ.copy()
+            env[
+                "PATH"
+            ] += f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
         else:
             python_exe = os.path.join(context.bin_path, "python")
+            env = os.environ
+
         cmd = [python_exe, "-m", "pip", "install", "--upgrade"]
-        cmd.extend(("pip", "setuptools"))
+        cmd.extend(("pip", "setuptools", "wheel"))
         subprocess.check_call(cmd)
 
         print("Installing requirements")
@@ -83,7 +89,7 @@ class QgisEnvBuilder(EnvBuilder):
 
         print("Setting up pre-commit")
         cmd = [os.path.join(context.bin_path, "pre-commit"), "install"]
-        subprocess.check_call(cmd, cwd=ROOT_DIR)
+        subprocess.check_call(cmd, cwd=ROOT_DIR, env=env, shell=is_windows())
 
 
 class PluginCreator:
@@ -106,6 +112,13 @@ class PluginCreator:
         if not self.venv:
             print("Skipping venv creation")
             return
+        try:
+            from qgis.core import QgsVectorLayer
+        except ImportError:
+            print("Your python environment has no access to QGIS libraries!")
+            return
+
+        print("Installing virtual environment")
         env_builder = QgisEnvBuilder(
             system_site_packages=True, with_pip=True, clear=True
         )

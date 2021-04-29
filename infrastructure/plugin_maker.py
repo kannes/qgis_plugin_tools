@@ -247,6 +247,7 @@ Put -h after command to see available optional arguments if any
             self.run_command(args, force_show_output=True)
 
     def venv(self):
+        print("Creating virtual env")
         creator = PluginCreator("", "", "", True)
         creator.create_venv()
 
