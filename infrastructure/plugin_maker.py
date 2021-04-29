@@ -11,6 +11,7 @@ from typing import List
 from zipfile import ZipFile
 
 from ..tools.resources import plugin_name, plugin_path, resources_path
+from .plugin_creator import PluginCreator
 
 __copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
@@ -124,6 +125,7 @@ Commands:
                     or to the plugin repository
      transup        Search for new strings to be translated
      transcompile   Compile translation files to .qm files.
+     venv           Create python virtual environment
 Put -h after command to see available optional arguments if any
 """
         parser = ArgumentParser(usage=usage)
@@ -243,6 +245,10 @@ Put -h after command to see available optional arguments if any
             echo(f"Processing {fil}")
             args = pre_args + [self.lrelease, "-qt=qt5", fil]
             self.run_command(args, force_show_output=True)
+
+    def venv(self):
+        creator = PluginCreator("", "", "", True)
+        creator.create_venv()
 
     @staticmethod
     def run_command(args, d=None, force_show_output=False):
