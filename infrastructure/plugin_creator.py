@@ -5,10 +5,9 @@ import shutil
 import subprocess
 import sys
 from types import SimpleNamespace
-from typing import Optional
 from venv import EnvBuilder
 
-VENV_NAME = '.venv'
+VENV_NAME = ".venv"
 
 PLUGIN_DIR = os.getcwd()
 ROOT_DIR = os.path.abspath(os.path.join(PLUGIN_DIR, os.pardir))
@@ -61,38 +60,38 @@ def is_windows():
 
 
 class QgisEnvBuilder(EnvBuilder):
-
-    def upgrade_dependencies(self, context: SimpleNamespace) -> None:
+    def post_setup(self, context: SimpleNamespace) -> None:
         """
         Upgrade pip and setuptools and install dependencies and pre-commit.
-        post_setup could be used as well, but it will run before upgrade_dependencies,
-        which might end up using very old pip.
         :param context:
         :return:
         """
-        super(QgisEnvBuilder, self).upgrade_dependencies(context)
-        if sys.platform == 'win32':
-            python_exe = os.path.join(context.bin_path, 'python.exe')
 
+        # This part applied from Python 3.9 EnvBuilder.upgrade_dependencies
+        if sys.platform == "win32":
+            python_exe = os.path.join(context.bin_path, "python.exe")
         else:
-            python_exe = os.path.join(context.bin_path, 'python')
+            python_exe = os.path.join(context.bin_path, "python")
+        cmd = [python_exe, "-m", "pip", "install", "--upgrade"]
+        cmd.extend(("pip", "setuptools"))
+        subprocess.check_call(cmd)
 
         print("Installing requirements")
-        requirements = os.path.join(ROOT_DIR, 'requirements-dev.txt')
-        cmd = [python_exe, '-m', 'pip', 'install', '-r', requirements]
+        requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
+        cmd = [python_exe, "-m", "pip", "install", "-r", requirements]
         subprocess.check_call(cmd)
 
         print("Setting up pre-commit")
-        cmd = [os.path.join(context.bin_path, 'pre-commit'), 'install']
+        cmd = [os.path.join(context.bin_path, "pre-commit"), "install"]
         subprocess.check_call(cmd, cwd=ROOT_DIR)
 
 
 class PluginCreator:
-    def __init__(self, organization: str, repo: str, url: str, python: Optional[str]) -> None:
+    def __init__(self, organization: str, repo: str, url: str, venv: bool) -> None:
         self.organization = organization
         self.repo = repo
         self.url = url
-        self.python = python
+        self.venv = venv
 
     def create(self):
         os.chdir(TEMPLATE_ROOT_DIR)
@@ -104,10 +103,12 @@ class PluginCreator:
             self.copy_and_edit_file(PLUGIN_DIR, f)
 
     def create_venv(self):
-        if not self.python:
+        if not self.venv:
             print("Skipping venv creation")
             return
-        env_builder = QgisEnvBuilder(system_site_packages=True, with_pip=True, clear=True, upgrade_deps=True)
+        env_builder = QgisEnvBuilder(
+            system_site_packages=True, with_pip=True, clear=True
+        )
         venv_dir = os.path.join(ROOT_DIR, VENV_NAME)
         env_builder.create(venv_dir)
 
@@ -122,11 +123,11 @@ class PluginCreator:
             content = fil.read()
         content = (
             content.replace("<plugin_name>", PLUGIN_NAME)
-                .replace("<organization>", self.organization)
-                .replace("<repo>", self.repo)
-                .replace("<url>", self.url)
-                .replace("#<commented_out>", "")
-                .replace("# <commented_out>", "")  # Automatic formatting might cause these
+            .replace("<organization>", self.organization)
+            .replace("<repo>", self.repo)
+            .replace("<url>", self.url)
+            .replace("#<commented_out>", "")
+            .replace("# <commented_out>", "")  # Automatic formatting might cause these
         )
         with open(dst_file, "w") as fil:
             fil.write(content)
@@ -138,31 +139,25 @@ def parse_args():
         "-o",
         "--organization",
         help="Github / Gitlab organization or user name. "
-             "For example GispoCoding in https://github.com/GispoCoding/GlobeBuilder",
+        "For example GispoCoding in https://github.com/GispoCoding/GlobeBuilder",
         default="",
     )
     parser.add_argument(
         "-r",
         "--repository",
         help="Github / Gitlab repository name. "
-             "For example GlobeBuilder in https://github.com/GispoCoding/GlobeBuilder",
+        "For example GlobeBuilder in https://github.com/GispoCoding/GlobeBuilder",
         required=True,
     )
     parser.add_argument(
         "-u",
         "--url",
         help="Url of the repository hosting service. "
-             "Typically https://github.com or https://gitlab.com",
+        "Typically https://github.com or https://gitlab.com",
         default="https://github.com",
     )
     parser.add_argument(
-        "-p",
-        "--python",
-        required=False,
-        help="Path to the Python interpreter aware of QGIS."
-             "In Windows use the qgis-python.bat shipped with OSGEO4w: "
-             r"C:\OSGeo4W64\bin\python-qgis.bat or "
-             r"C:\OSGeo4W64\bin\python-qgis-ltr.bat",
+        "--venv", action="store_true", help="Create Python virtual environment"
     )
 
     if "-" in PLUGIN_NAME or " " in PLUGIN_NAME:
@@ -173,6 +168,6 @@ def parse_args():
 
 def create_plugin():
     args = parse_args()
-    creator = PluginCreator(args.organization, args.repository, args.url, args.python)
+    creator = PluginCreator(args.organization, args.repository, args.url, args.venv)
     creator.create()
     creator.create_venv()
