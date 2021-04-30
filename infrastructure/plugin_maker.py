@@ -238,29 +238,31 @@ Put -h after command to see available optional arguments if any
             "--ide",
             type=str,
             help=r"Path to your .exe (eg. C:\Program Files\JetBrains\IntelliJ IDEA 2020.3.2\bin\idea64.exe)."
-            "Set the path to a environment variable QGIS_DEVELOPMENT_IDE to avoid typing it each time.",
-            default=os.environ.get("QGIS_DEVELOPMENT_IDE", ""),
+            "Set the path to a environment variable QGIS_DEV_IDE to avoid typing it each time.",
+            default=os.environ.get("QGIS_DEV_IDE", ""),
         )
         parser.add_argument(
             "--qgis_root",
             type=str,
             help=r"Path to your QGIS installation directory. (eg. C:\OSGeo4W64 or C:\QGIS_3_16). "
-            r"Set the path to a environment variable OSGEO4W_ROOT to avoid typing it each time.",
-            default=os.environ.get("OSGEO4W_ROOT", r"C:\OSGeo4W64"),
+            r"Set the path to a environment variable QGIS_DEV_OSGEO4W_ROOT to avoid typing it each time.",
+            default=os.environ.get("QGIS_DEV_OSGEO4W_ROOT", r"C:\OSGeo4W64"),
         )
         parser.add_argument(
             "--qgis_prefix_path",
             type=str,
             help=r"This is a path to OSGEO4W_ROOT/apps/ which is either qgis or qgis-ltr. "
-            r"Set the path to a environment variable QGIS_PREFIX_PATH to avoid typing it each time.",
-            default=os.environ.get("QGIS_PREFIX_PATH", r"C:\OSGeo4W64\apps\qgis-ltr"),
+            r"Set the path to a environment variable QGIS_DEV_PREFIX_PATH to avoid typing it each time.",
+            default=os.environ.get(
+                "QGIS_DEV_PREFIX_PATH", r"C:\OSGeo4W64\apps\qgis-ltr"
+            ),
         )
         parser.add_argument(
             "--save_to_disk",
             action="store_true",
             help=r"Saves the startup script  to the disk rather than starting the IDE.",
         )
-        parser.set_defaults(test=False)
+        parser.set_defaults(ide=os.environ.get("QGIS_DEV_IDE", ""))
         args = parser.parse_args(sys.argv[2:])
         if not args.ide:
             print("Add reasonable value to --ide")
@@ -268,10 +270,10 @@ Put -h after command to see available optional arguments if any
 
         script = rf"""
 @echo off
-set IDE={args.ide}
-set REPOSITORY={ROOT_DIR}
-set OSGEO4W_ROOT={args.qgis_root}
-set QGIS_PREFIX_PATH={args.qgis_prefix_path}
+set IDE="{args.ide}"
+set REPOSITORY="{ROOT_DIR}"
+set OSGEO4W_ROOT="{args.qgis_root}"
+set QGIS_PREFIX_PATH="{args.qgis_prefix_path}"
 set TEMP_PATH=%PATH%
 call "%OSGEO4W_ROOT%"\bin\o4w_env.bat
 call "%OSGEO4W_ROOT%"\bin\qt5_env.bat

@@ -30,9 +30,9 @@ To get started with the development, follow these steps:
     :: Activate the venv
     ..\.venv\Scripts\activate.bat
     :: Check out the arguments with python build.py start_ide -h
-    set QGIS_DEVELOPMENT_IDE=<path-to-your-ide.exe>
-    set OSGEO4W_ROOT=C:\OSGeo4W64
-    set QGIS_PREFIX_PATH=C:\OSGeo4W64\apps\qgis-ltr
+    set QGIS_DEV_IDE=<path-to-your-ide.exe>
+    set QGIS_DEV_OSGEO4W_ROOT=C:\OSGeo4W64
+    set QGIS_DEV_PREFIX_PATH=C:\OSGeo4W64\apps\qgis-ltr
     python build.py start_ide
     :: If you want to create a bat script for starting the ide, you can do it with:
     python build.py start_ide --save_to_disk
