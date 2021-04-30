@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # flake8: noqa
+import argparse
 import os
 import shutil
 import subprocess
@@ -229,10 +230,10 @@ Put -h after command to see available optional arguments if any
         echo(f"Created package: {PLUGINNAME}.zip")
 
     def start_ide(self):
-        if not is_windows():
-            print("This command is only meant to run on Windows environment.")
-            return
-        parser = ArgumentParser()
+        # if not is_windows():
+        #     print("This command is only meant to run on Windows environment.")
+        #     return
+        parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         parser.add_argument(
             "--ide",
             type=str,
@@ -243,26 +244,34 @@ Put -h after command to see available optional arguments if any
         parser.add_argument(
             "--qgis_root",
             type=str,
-            help=r"Path to your QGIS installation directory. (eg. C:\OSGeo4W64 or C:\QGIS_3_16"
+            help=r"Path to your QGIS installation directory. (eg. C:\OSGeo4W64 or C:\QGIS_3_16). "
             r"Set the path to a environment variable OSGEO4W_ROOT to avoid typing it each time.",
             default=os.environ.get("OSGEO4W_ROOT", r"C:\OSGeo4W64"),
         )
         parser.add_argument(
             "--qgis_prefix_path",
             type=str,
-            help=r"This is a path in OSGEO4W_ROOT/apps/ which is either qgis or qgis-ltr"
+            help=r"This is a path to OSGEO4W_ROOT/apps/ which is either qgis or qgis-ltr. "
             r"Set the path to a environment variable QGIS_PREFIX_PATH to avoid typing it each time.",
-            default=os.environ.get("QGIS_PREFIX_PATH", "qgis"),
+            default=os.environ.get("QGIS_PREFIX_PATH", r"C:\OSGeo4W64\apps\qgis-ltr"),
+        )
+        parser.add_argument(
+            "--save_to_disk",
+            action="store_true",
+            help=r"Saves the startup script  to the disk rather than starting the IDE.",
         )
         parser.set_defaults(test=False)
         args = parser.parse_args(sys.argv[2:])
+        if not args.ide:
+            print("Add reasonable value to --ide")
+            return
 
         script = rf"""
 @echo off
 set IDE={args.ide}
 set REPOSITORY={ROOT_DIR}
 set OSGEO4W_ROOT={args.qgis_root}
-set QGIS_PREFIX_PATH=%OSGEO4W_ROOT:\=/%/apps/{args.qgis_prefix_path}
+set QGIS_PREFIX_PATH={args.qgis_prefix_path}
 set TEMP_PATH=%PATH%
 call "%OSGEO4W_ROOT%"\bin\o4w_env.bat
 call "%OSGEO4W_ROOT%"\bin\qt5_env.bat
@@ -283,15 +292,24 @@ set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHON
 
 start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
 """
-        process = subprocess.Popen(
-            "cmd.exe",
-            shell=False,
-            universal_newlines=True,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        out, err = process.communicate(script)
+
+        if args.save_to_disk:
+            with open(Path(ROOT_DIR) / "start_ide.bat", "w") as f:
+                f.write(script)
+                print(
+                    f"Script saved successfully to {f.name}. "
+                    f"You can move the file whenever you want."
+                )
+        else:
+            process = subprocess.Popen(
+                "cmd.exe",
+                shell=False,
+                universal_newlines=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            out, err = process.communicate(script)
 
     def transup(self):
         files_to_translate = self.py_files + self.ui_files
