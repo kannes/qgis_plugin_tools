@@ -33,9 +33,9 @@ To get started with the development, follow these steps:
     set QGIS_DEV_IDE=<path-to-your-ide.exe>
     set QGIS_DEV_OSGEO4W_ROOT=C:\OSGeo4W64
     set QGIS_DEV_PREFIX_PATH=C:\OSGeo4W64\apps\qgis-ltr
-    python build.py start_ide
+    C:\OSGeo4W64\bin\python-qgis.bat build.py start_ide
     :: If you want to create a bat script for starting the ide, you can do it with:
-    python build.py start_ide --save_to_disk
+    C:\OSGeo4W64\bin\python-qgis.bat build.py venv start_ide --save_to_disk
    ```
 
 Now the development environment should be all-set.
