@@ -54,42 +54,17 @@ PLUGIN_FILES = [
     "resources/icons/.gitignore",
 ]
 
+VENV_CREATION_SCRIPT = """
+python -m venv --system-site-packages --clear {venv_path}
+{source}{activator}
+python -m pip install --upgrade pip
+python -m pip install -r {requirements}
+pre-commit install
+"""
+
 
 def is_windows():
     return "win" in sys.platform
-
-
-class QgisEnvBuilder(EnvBuilder):
-    def post_setup(self, context: SimpleNamespace) -> None:
-        """
-        Upgrade pip and setuptools and install dependencies and pre-commit.
-        :param context:
-        :return:
-        """
-
-        # This part applied from Python 3.9 EnvBuilder.upgrade_dependencies
-        if sys.platform == "win32":
-            python_exe = os.path.join(context.bin_path, "python.exe")
-            env = os.environ.copy()
-            env[
-                "PATH"
-            ] += f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
-        else:
-            python_exe = os.path.join(context.bin_path, "python")
-            env = os.environ
-
-        cmd = [python_exe, "-m", "pip", "install", "--upgrade"]
-        cmd.extend(("pip", "setuptools", "wheel"))
-        subprocess.check_call(cmd)
-
-        print("Installing requirements")
-        requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
-        cmd = [python_exe, "-m", "pip", "install", "-r", requirements]
-        subprocess.check_call(cmd)
-
-        print("Setting up pre-commit")
-        cmd = [os.path.join(context.bin_path, "pre-commit"), "install"]
-        subprocess.check_call(cmd, cwd=ROOT_DIR, env=env, shell=is_windows())
 
 
 class PluginCreator:
@@ -118,12 +93,38 @@ class PluginCreator:
             print("Your python environment has no access to QGIS libraries!")
             return
 
+        if is_windows():
+            env = os.environ.copy()
+            env[
+                "PATH"
+            ] += f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
+        else:
+            env = os.environ
+
         print("Installing virtual environment")
-        env_builder = QgisEnvBuilder(
-            system_site_packages=True, with_pip=True, clear=True
+        requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
+        script = VENV_CREATION_SCRIPT.format(
+            venv_path=os.path.join(ROOT_DIR, VENV_NAME),
+            source="source " if not is_windows() else "",
+            activator=os.path.join(
+                ROOT_DIR,
+                VENV_NAME,
+                "bin" if not is_windows() else "Scripts",
+                "activate",
+            ),
+            requirements=requirements,
         )
-        venv_dir = os.path.join(ROOT_DIR, VENV_NAME)
-        env_builder.create(venv_dir)
+
+        process = subprocess.Popen(
+            "cmd.exe" if is_windows() else "sh",
+            shell=False,
+            universal_newlines=True,
+            stdin=subprocess.PIPE,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            env=env,
+        )
+        process.communicate(script)
 
     def copy_and_edit_file(self, dst_dir, f):
         print(f)
