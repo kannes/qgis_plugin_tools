@@ -58,6 +58,33 @@ COMPILED_RESOURCE_FILES = ["resources.py"]
 #################################################
 """
 
+STARTUP_BAT = r"""
+@echo off
+set IDE={ide}
+set REPOSITORY={repository}
+set OSGEO4W_ROOT={qgis_root}
+set QGIS_PREFIX_PATH={qgis_prefix_path}
+set TEMP_PATH=%PATH%
+call "%OSGEO4W_ROOT%"\bin\o4w_env.bat
+call "%OSGEO4W_ROOT%"\bin\qt5_env.bat
+call "%OSGEO4W_ROOT%"\bin\py3_env.bat
+call "%OSGEO4W_ROOT%"\apps\grass\grass78\etc\env.bat
+path %QGIS_PREFIX_PATH%\bin;%PATH%
+path %PATH%;%OSGEO4W_ROOT%\apps\Qt5\bin
+path %PATH%;%OSGEO4W_ROOT%\apps\Python37\Scripts
+path %QGIS_PREFIX_PATH%\bin;%PATH%
+:: Add original PATH
+path %PATH%;%TEMP_PATH%
+set GDAL_FILENAME_IS_UTF8=YES
+:: Set VSI cache to be used as buffer, see #6448
+set VSI_CACHE=TRUE
+set VSI_CACHE_SIZE=1000000
+set QT_PLUGIN_PATH=%QGIS_PREFIX_PATH%\qtplugins;%OSGEO4W_ROOT%\apps\Qt5\plugins
+set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHONPATH%
+
+start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
+"""
+
 # self.qgis_dir points to the location where your plugin should be installed.
 # This varies by platform, relative to your HOME directory:
 # 	* Linux:
@@ -267,32 +294,12 @@ Put -h after command to see available optional arguments if any
             print("Add reasonable value to --ide")
             return
 
-        script = rf"""
-@echo off
-set IDE="{args.ide}"
-set REPOSITORY="{ROOT_DIR}"
-set OSGEO4W_ROOT="{args.qgis_root}"
-set QGIS_PREFIX_PATH="{args.qgis_prefix_path}"
-set TEMP_PATH=%PATH%
-call "%OSGEO4W_ROOT%"\bin\o4w_env.bat
-call "%OSGEO4W_ROOT%"\bin\qt5_env.bat
-call "%OSGEO4W_ROOT%"\bin\py3_env.bat
-call "%OSGEO4W_ROOT%"\apps\grass\grass78\etc\env.bat
-path %QGIS_PREFIX_PATH%\bin;%PATH%
-path %PATH%;%OSGEO4W_ROOT%\apps\Qt5\bin
-path %PATH%;%OSGEO4W_ROOT%\apps\Python37\Scripts
-path %QGIS_PREFIX_PATH%\bin;%PATH%
-:: Add original PATH
-path %PATH%;%TEMP_PATH%
-set GDAL_FILENAME_IS_UTF8=YES
-:: Set VSI cache to be used as buffer, see #6448
-set VSI_CACHE=TRUE
-set VSI_CACHE_SIZE=1000000
-set QT_PLUGIN_PATH=%QGIS_PREFIX_PATH%\qtplugins;%OSGEO4W_ROOT%\apps\Qt5\plugins
-set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHONPATH%
-
-start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
-"""
+        script = STARTUP_BAT.format(
+            ide=args.ide if '"' in args.ide or " " not in args.ide else f'"{args.ide}"',
+            repository=ROOT_DIR,
+            qgis_root=args.qgis_root,
+            qgis_prefix_path=args.qgis_prefix_path,
+        )
 
         if args.save_to_disk:
             with open(Path(ROOT_DIR) / "start_ide.bat", "w") as f:
@@ -307,10 +314,10 @@ start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
                 shell=False,
                 universal_newlines=True,
                 stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
             )
-            out, err = process.communicate(script)
+            process.communicate(script)
 
     def transup(self):
         files_to_translate = self.py_files + self.ui_files
