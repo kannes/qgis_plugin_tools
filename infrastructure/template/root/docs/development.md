@@ -15,24 +15,27 @@ For building the plugin use platform independent [build.py](../<plugin_name>/bui
 
 To get started with the development, follow these steps:
 
-1. Create a new Python virtual environment with Python aware of QGIS libraries:
+1. Go to the  [<plugin_name>](../<plugin_name>) directory with a terminal
+1. Create a new Python virtual environment with pre-commit using Python aware of QGIS libraries:
    ```shell
-    python -m venv --system-site-packages venv
+    python build.py venv
     ```
    In Windows it would be best to use python-qgis.bat or python-qgis-ltr.bat:
    ```shell
-    C:\OSGeo4W64\bin\python-qgis.bat -m venv --system-site-packages venv
+    C:\OSGeo4W64\bin\python-qgis.bat build.py venv
    ```
-   Also in Windows, make sure that you have pip installed: `C:\OSGeo4W64\bin\python-qgis.bat -m ensurepip`
-1. Activate the virtual environment, uprade pip and install all the development dependencies:
+1. If you want to use IDE for development, it is best to start it with the
+   following way on Windows:
    ```shell
-   source venv/bin/activate # On Windows ./venv/Scripts/activate.bat`
-   python -m pip install --upgrade pip
-   python -m pip install -r requirements-dev.txt
-   ```
-1. Install [pre-commit](https://pre-commit.com/) hooks:
-   ```shell
-   pre-commit install
+    :: Activate the venv
+    ..\.venv\Scripts\activate.bat
+    :: Check out the arguments with python build.py start_ide -h
+    set QGIS_DEV_IDE=<path-to-your-ide.exe>
+    set QGIS_DEV_OSGEO4W_ROOT=C:\OSGeo4W64
+    set QGIS_DEV_PREFIX_PATH=C:\OSGeo4W64\apps\qgis-ltr
+    C:\OSGeo4W64\bin\python-qgis.bat build.py start_ide
+    :: If you want to create a bat script for starting the ide, you can do it with:
+    C:\OSGeo4W64\bin\python-qgis.bat build.py venv start_ide --save_to_disk
    ```
 
 Now the development environment should be all-set.

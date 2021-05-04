@@ -40,7 +40,8 @@ This will create needed structure for your plugin
     cd TestPlugin
     git submodule add https://github.com/GispoCoding/qgis_plugin_tools
     cp qgis_plugin_tools/infrastructure/creator.py .
-    # Create the plugin template. Replace with your information
+    # Create the plugin template. Replace with your information.
+    # On Windows you might want to use Python shipped with QGIS (eq. C:\OSGeo4W64\bin\python-qgis.bat)
     python creator.py -o GispoCoding -r test-plugin-name -u https://github.com
     rm creator.py
     cd ..

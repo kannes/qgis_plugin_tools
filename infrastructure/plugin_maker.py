@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # flake8: noqa
+import argparse
 import os
 import shutil
 import subprocess
@@ -11,6 +12,7 @@ from typing import List
 from zipfile import ZipFile
 
 from ..tools.resources import plugin_name, plugin_path, resources_path
+from .plugin_creator import ROOT_DIR, PluginCreator
 
 __copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
@@ -54,6 +56,33 @@ COMPILED_RESOURCE_FILES = ["resources.py"]
 #################################################
 # Normally you would not need to edit below here
 #################################################
+"""
+
+STARTUP_BAT = r"""
+@echo off
+set IDE={ide}
+set REPOSITORY={repository}
+set OSGEO4W_ROOT={qgis_root}
+set QGIS_PREFIX_PATH={qgis_prefix_path}
+set TEMP_PATH=%PATH%
+call "%OSGEO4W_ROOT%"\bin\o4w_env.bat
+call "%OSGEO4W_ROOT%"\bin\qt5_env.bat
+call "%OSGEO4W_ROOT%"\bin\py3_env.bat
+call "%OSGEO4W_ROOT%"\apps\grass\grass78\etc\env.bat
+path %QGIS_PREFIX_PATH%\bin;%PATH%
+path %PATH%;%OSGEO4W_ROOT%\apps\Qt5\bin
+path %PATH%;%OSGEO4W_ROOT%\apps\Python37\Scripts
+path %QGIS_PREFIX_PATH%\bin;%PATH%
+:: Add original PATH
+path %PATH%;%TEMP_PATH%
+set GDAL_FILENAME_IS_UTF8=YES
+:: Set VSI cache to be used as buffer, see #6448
+set VSI_CACHE=TRUE
+set VSI_CACHE_SIZE=1000000
+set QT_PLUGIN_PATH=%QGIS_PREFIX_PATH%\qtplugins;%OSGEO4W_ROOT%\apps\Qt5\plugins
+set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHONPATH%
+
+start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
 """
 
 # self.qgis_dir points to the location where your plugin should be installed.
@@ -122,8 +151,11 @@ Commands:
      deploy         Deploys the plugin to the QGIS plugin directory ({self.plugin_dir})
      package        Builds a package that can be uploaded to Github releases
                     or to the plugin repository
+     start_ide      Start IDE of your choice. This is required on Windows to
+                    assure that the environment is set correctly.
      transup        Search for new strings to be translated
      transcompile   Compile translation files to .qm files.
+     venv           Create python virtual environment
 Put -h after command to see available optional arguments if any
 """
         parser = ArgumentParser(usage=usage)
@@ -224,6 +256,69 @@ Put -h after command to see available optional arguments if any
         self.join_zips(zips)
         echo(f"Created package: {PLUGINNAME}.zip")
 
+    def start_ide(self):
+        if not is_windows():
+            print("This command is only meant to run on Windows environment.")
+            return
+        parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser.add_argument(
+            "--ide",
+            type=str,
+            help=r"Path to your .exe (eg. C:\Program Files\JetBrains\IntelliJ IDEA 2020.3.2\bin\idea64.exe)."
+            "Set the path to a environment variable QGIS_DEV_IDE to avoid typing it each time.",
+            default=os.environ.get("QGIS_DEV_IDE", ""),
+        )
+        parser.add_argument(
+            "--qgis_root",
+            type=str,
+            help=r"Path to your QGIS installation directory. (eg. C:\OSGeo4W64 or C:\QGIS_3_16). "
+            r"Set the path to a environment variable QGIS_DEV_OSGEO4W_ROOT to avoid typing it each time.",
+            default=os.environ.get("QGIS_DEV_OSGEO4W_ROOT", r"C:\OSGeo4W64"),
+        )
+        parser.add_argument(
+            "--qgis_prefix_path",
+            type=str,
+            help=r"This is a path to OSGEO4W_ROOT/apps/ which is either qgis or qgis-ltr. "
+            r"Set the path to a environment variable QGIS_DEV_PREFIX_PATH to avoid typing it each time.",
+            default=os.environ.get(
+                "QGIS_DEV_PREFIX_PATH", r"C:\OSGeo4W64\apps\qgis-ltr"
+            ),
+        )
+        parser.add_argument(
+            "--save_to_disk",
+            action="store_true",
+            help=r"Saves the startup script  to the disk rather than starting the IDE.",
+        )
+        args = parser.parse_args(sys.argv[2:])
+        if not args.ide:
+            print("Add reasonable value to --ide")
+            return
+
+        script = STARTUP_BAT.format(
+            ide=args.ide if '"' in args.ide or " " not in args.ide else f'"{args.ide}"',
+            repository=ROOT_DIR,
+            qgis_root=args.qgis_root,
+            qgis_prefix_path=args.qgis_prefix_path,
+        )
+
+        if args.save_to_disk:
+            with open(Path(ROOT_DIR) / "start_ide.bat", "w") as f:
+                f.write(script)
+                print(
+                    f"Script saved successfully to {f.name}. "
+                    f"You can move the file whenever you want."
+                )
+        else:
+            process = subprocess.Popen(
+                "cmd.exe",
+                shell=False,
+                universal_newlines=True,
+                stdin=subprocess.PIPE,
+                stdout=sys.stdout,
+                stderr=sys.stderr,
+            )
+            process.communicate(script)
+
     def transup(self):
         files_to_translate = self.py_files + self.ui_files
         for locale in self.locales:
@@ -243,6 +338,11 @@ Put -h after command to see available optional arguments if any
             echo(f"Processing {fil}")
             args = pre_args + [self.lrelease, "-qt=qt5", fil]
             self.run_command(args, force_show_output=True)
+
+    def venv(self):
+        print("Creating virtual env")
+        creator = PluginCreator("", "", "", True)
+        creator.create_venv()
 
     @staticmethod
     def run_command(args, d=None, force_show_output=False):
