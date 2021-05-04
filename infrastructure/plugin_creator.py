@@ -33,6 +33,7 @@ ROOT_FILES = [
     "CHANGELOG.md",
     ".github/workflows/tests.yml",
     ".github/workflows/tests_ltr.yml",
+    ".github/workflows/windows_tests.yml",
     ".github/workflows/release.yml",
     ".github/workflows/pre-commit.yml",
     ".github/ISSUE_TEMPLATE/bug_report.md",
