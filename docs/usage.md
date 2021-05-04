@@ -5,7 +5,7 @@
 For setting up the logging (usually in main plugin file):
 ```python
 from .qgis_plugin_tools.tools.resources import plugin_name
-from .qgis_plugin_tools.tools.custom_logging import setup_logger, use_custom_msg_bar_in_logger
+from .qgis_plugin_tools.tools.custom_logging import setup_logger, add_logger_msg_bar_to_widget
 
 # Setup without message bar support
 # setup_logger(plugin_name())
@@ -13,9 +13,10 @@ from .qgis_plugin_tools.tools.custom_logging import setup_logger, use_custom_msg
 # Setup with QGIS interface to add message bar support
 setup_logger(plugin_name(), iface)
 
-# If you want to use dialog's message bar instead, you can setup that like this
-dialog = Dialog()  # Dialog has QgsMessageBar as message_bar
-use_custom_msg_bar_in_logger(plugin_name(), dialog.message_bar)
+# If you want to add a message bar widget to a dialog, you can setup that like this:
+dialog = Dialog()
+# adds message_bar to dialog and uses it with message bar logging handler
+add_logger_msg_bar_to_widget(plugin_name(), dialog)
 ```
 
 To use the logging system:
@@ -34,7 +35,7 @@ LOGGER.warning('Log a warning here')
 LOGGER.error('Log an error here')
 LOGGER.critical('Log a critical error here')
 
-# These are logged to the message bar in addition to normal logging
+# These are logged to the message bar (main window's or dialog's) in addition to normal logging
 LOGGER.info('Msg bar message', extra=bar_msg("some details here"))
 LOGGER.info('Msg bar message', extra=bar_msg("some details here", success=True))
 LOGGER.warning('Msg bar message', extra={'details:': "some details here"})
@@ -72,7 +73,7 @@ Check [tests](../testing/test_network.py) for more examples.
 ```python
 from .qgis_plugin_tools.tools.network import fetch
 
-contents = fetch('www.exampleurl.com')
+contents = fetch('www.examapleurl.com')
 ```
 
 ## Settings tools

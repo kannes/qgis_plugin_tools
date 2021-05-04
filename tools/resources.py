@@ -12,6 +12,8 @@ __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
+from qgis._core import QgsApplication
+
 PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""
 
@@ -44,6 +46,18 @@ def root_path(*args: str) -> str:
     """
     path = dirname(dirname(__file__))
     path = abspath(abspath(join(path, pardir, pardir)))
+    for item in args:
+        path = abspath(join(path, item))
+
+    return path
+
+
+def profile_path(*args: str) -> str:
+    """
+    Get the path inside profile folder.
+    return: Absolute path to the resource.
+    """
+    path = QgsApplication.qgisSettingsDirPath()
     for item in args:
         path = abspath(join(path, item))
 

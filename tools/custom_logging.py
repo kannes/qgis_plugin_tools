@@ -7,11 +7,12 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QLayout, QVBoxLayout, QWidget
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface, QgsMessageBar
 
 from .i18n import tr
-from .resources import plugin_name, plugin_path
+from .resources import plugin_name, plugin_path, profile_path
 from .settings import setting_key
 
 PLUGIN_NAME = plugin_name()
@@ -226,6 +227,21 @@ def get_log_level(target: LogTarget) -> int:
     return logging.getLevelName(get_log_level_name(target))
 
 
+def get_log_folder() -> Path:
+    """
+    Get Path to the log folder in QGIS profile directory.
+    If it does not exist, create one.
+
+    :return: Path to the log folder
+    """
+    old_log_dir = Path(plugin_path("logs"))
+    if old_log_dir.exists():
+        return old_log_dir
+    log_dir = Path(profile_path("logs"))
+    log_dir.mkdir(exist_ok=True)
+    return log_dir
+
+
 def setup_logger(
     logger_name: str, iface: Optional[QgisInterface] = None
 ) -> logging.Logger:
@@ -258,10 +274,8 @@ def setup_logger(
             "%(asctime)s - [%(levelname)-7s] - %(filename)s:%(lineno)d : %(message)s",
             "%d.%m.%Y %H:%M:%S",
         )
-        log_dir = Path(plugin_path("logs"))
-        log_dir.mkdir(exist_ok=True)
         file_handler = RotatingFileHandler(
-            str(log_dir / Path(f"{logger_name}.log")), maxBytes=1024 * 1024 * 2
+            str(get_log_folder() / Path(f"{logger_name}.log")), maxBytes=1024 * 1024 * 2
         )
         file_handler.setFormatter(file_formatter)
         file_handler.setLevel(file_level)
@@ -295,6 +309,22 @@ def setup_logger(
     return logger
 
 
+def add_logger_msg_bar_to_widget(logger_name: str, widget: QWidget) -> None:
+    """
+    Adds QgsMessageBar to any widget if it is not already there.
+    This message bar will be used in logging instead of iface message bar.
+    :param logger_name: The logger name that we want modify
+    :param widget: QWidget that will have the message bar
+    """
+    if not hasattr(widget, "message_bar"):
+        layout: QLayout = widget.layout()
+        widget.message_bar = QgsMessageBar(widget)
+        if isinstance(layout, QVBoxLayout):
+            # noinspection PyArgumentList
+            layout.insertWidget(0, widget.message_bar)
+    use_custom_msg_bar_in_logger(logger_name, widget.message_bar)
+
+
 def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar) -> None:
     """
     Remove QgsMessageBarHandler that is using the iface message bar
@@ -303,7 +333,6 @@ def use_custom_msg_bar_in_logger(logger_name: str, msg_bar: QgsMessageBar) -> No
     :param logger_name: The logger name that we want modify
     :param msg_bar: message bar that is inside dialog, dockwidget or
         in some other widget
-    :return:
     """
     logger = logging.getLogger(logger_name)
     bar_level = get_log_level(LogTarget.BAR)
