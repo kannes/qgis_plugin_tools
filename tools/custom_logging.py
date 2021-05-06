@@ -318,7 +318,7 @@ def add_logger_msg_bar_to_widget(logger_name: str, widget: QWidget) -> None:
     """
     if not hasattr(widget, "message_bar"):
         layout: QLayout = widget.layout()
-        widget.message_bar = QgsMessageBar(widget)
+        widget.message_bar = QgsMessageBar(widget)  # type: ignore
         if isinstance(layout, QVBoxLayout):
             # noinspection PyArgumentList
             layout.insertWidget(0, widget.message_bar)
