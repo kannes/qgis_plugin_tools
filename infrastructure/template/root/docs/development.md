@@ -5,6 +5,12 @@ This project uses [qgis_plugin_tools](https://github.com/GispoCoding/qgis_plugin
 use `--recurse-submodules` like so:
 `git clone --recurse-submodules <url>/<organization>/<repo>.git`
 
+When pulling from existing repo:
+```sh
+git submodule init
+git submodule update
+```
+
 The code for the plugin is in the [<plugin_name>](../<plugin_name>) folder. Make sure you have required tools, such as
 Qt with Qt Editor and Qt Linquist installed by following this
 [tutorial](https://www.qgistutorials.com/en/docs/3/building_a_python_plugin.html#get-the-tools).
@@ -27,15 +33,13 @@ To get started with the development, follow these steps:
 1. If you want to use IDE for development, it is best to start it with the
    following way on Windows:
    ```shell
-    :: Activate the venv
-    ..\.venv\Scripts\activate.bat
     :: Check out the arguments with python build.py start_ide -h
     set QGIS_DEV_IDE=<path-to-your-ide.exe>
     set QGIS_DEV_OSGEO4W_ROOT=C:\OSGeo4W64
     set QGIS_DEV_PREFIX_PATH=C:\OSGeo4W64\apps\qgis-ltr
     C:\OSGeo4W64\bin\python-qgis.bat build.py start_ide
     :: If you want to create a bat script for starting the ide, you can do it with:
-    C:\OSGeo4W64\bin\python-qgis.bat build.py venv start_ide --save_to_disk
+    C:\OSGeo4W64\bin\python-qgis.bat build.py start_ide --save_to_disk
    ```
 
 Now the development environment should be all-set.
@@ -74,11 +78,12 @@ it.
 
 ## Testing
 
-Install Docker, docker-compose and python packages listed in [requirements-dev.txt](../requirements-dev.txt)
+Install python packages listed in [requirements-dev.txt](../requirements-dev.txt)
 to run tests with:
 
 ```shell script
-python build.py test
+cd <plugin_name>
+python -m pytest test
 ```
 
 ## Translating
@@ -137,12 +142,25 @@ python build.py transcompile
 
 ## Creating a release
 
+### Github Release
+
 Follow these steps to create a release
 
 * Add changelog information to [CHANGELOG.md](../CHANGELOG.md) using this
   [format](https://raw.githubusercontent.com/opengisch/qgis-plugin-ci/master/CHANGELOG.md)
-* Make a new commit. (`git add -A && git commit -m "Release v0.1.0"`)
-* Create new tag for it (`git tag -a v0.1.0 -m "Version v0.1.0"`)
+* Make a new commit. (`git add -A && git commit -m "Release 0.1.0"`)
+* Create new tag for it (`git tag -a 0.1.0 -m "Version 0.1.0"`)
 * Push tag to Github using `git push --follow-tags`
 * Create Github release
 * [qgis-plugin-ci](https://github.com/opengisch/qgis-plugin-ci) adds release zip automatically as an asset
+
+Modify [release](../.github/workflows/release.yml) workflow according to its comments if you want to upload the
+plugin to QGIS plugin repository.
+
+### Local release
+
+For local release follow these steps:
+```shell
+cd <repo>
+qgis-plugin-ci package  --disable-submodule-update 0.1.0
+```
