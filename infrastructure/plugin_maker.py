@@ -27,8 +27,6 @@ def is_windows():
 PLUGINNAME = plugin_name()
 
 SUBMODULES = ["qgis_plugin_tools"]
-# This should be only edited for windows environment
-QGIS_INSTALLATION_DIR = os.path.join("C:", "OSGeo4W64", "bin")
 
 # Add files for any locales you want to support here
 LOCALES: List[str] = []
@@ -187,7 +185,7 @@ Put -h after command to see available optional arguments if any
     def _get_platform_args(self):
         pre_args = []
         if is_windows():
-            pre_args = ["cmd", "\c"]  # noqa W605
+            pre_args = ["cmd", "/c"]  # noqa W605
         return pre_args
 
     def deploy(self):
