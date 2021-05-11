@@ -3,15 +3,11 @@ __license__ = "GPL version 2"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
-import logging
 from typing import Any, Callable
 
-from .custom_logging import bar_msg
 from .exceptions import QgsPluginException
 from .i18n import tr
-from .resources import plugin_name
-
-LOGGER = logging.getLogger(plugin_name())
+from .messages import MsgBar
 
 
 def log_if_fails(fn: Callable) -> Callable:
@@ -33,8 +29,8 @@ def log_if_fails(fn: Callable) -> Callable:
             else:
                 fn(self)
         except QgsPluginException as e:
-            LOGGER.exception(str(e), extra=e.bar_msg)
+            MsgBar.exception(e, **e.bar_msg)
         except Exception as e:
-            LOGGER.exception(tr("Unhandled exception occurred"), extra=bar_msg(e))
+            MsgBar.exception(tr("Unhandled exception occurred"), e)
 
     return wrapper

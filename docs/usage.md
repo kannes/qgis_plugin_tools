@@ -24,6 +24,7 @@ To use the logging system:
 import logging
 from .qgis_plugin_tools.tools.resources import plugin_name
 from .qgis_plugin_tools.tools.custom_logging import bar_msg
+from .qgis_plugin_tools.tools.messages import MsgBar
 
 # Top of the file
 LOGGER = logging.getLogger(plugin_name())
@@ -36,8 +37,8 @@ LOGGER.error('Log an error here')
 LOGGER.critical('Log a critical error here')
 
 # These are logged to the message bar (main window's or dialog's) in addition to normal logging
-LOGGER.info('Msg bar message', extra=bar_msg("some details here"))
-LOGGER.info('Msg bar message', extra=bar_msg("some details here", success=True))
+MsgBar.info("Msg bar message", "some details here")
+MsgBar.warning('Msg bar message', "some details here", success=True)
 LOGGER.warning('Msg bar message', extra={'details:': "some details here"})
 LOGGER.error('Msg bar message', extra=bar_msg("some details here", duration=10))
 ```
@@ -48,7 +49,7 @@ all user thrown exceptions at the same time, and you can even use the bar messag
 
 ```python
 from .qgis_plugin_tools.tools.exceptions import QgsPluginException
-from .qgis_plugin_tools.tools.custom_logging import bar_msg
+from .qgis_plugin_tools.tools.messages import MsgBar
 from .qgis_plugin_tools.tools.i18n import tr
 
 try:
@@ -56,9 +57,9 @@ try:
     raise QgsPluginNotImplementedException(tr('This is not implemented'), bar_msg(tr('Please implement')))
 except QgsPluginException as e:
     # Shows bar message
-    LOGGER.exception(str(e), extra=e.bar_msg)
+    MsgBar.exception(str(e), **e.bar_msg)
 except Exception as e:
-    LOGGER.exception(tr('Unhandled exception occurred'), extra=bar_msg(e))
+    MsgBar.exception(tr('Unhandled exception occurred'), e)
 ```
 
 Check [tests](../testing/test_decorations.py) for more examples.

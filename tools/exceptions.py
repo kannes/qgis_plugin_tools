@@ -3,7 +3,7 @@ __license__ = "GPL version 2"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 
 class QgsPluginException(Exception):
@@ -13,7 +13,7 @@ class QgsPluginException(Exception):
     default_msg = ""
 
     def __init__(
-        self, message: Optional[str] = None, bar_msg: Optional[Dict[str, str]] = None
+        self, message: Optional[str] = None, bar_msg: Optional[Dict[str, Any]] = None
     ) -> None:
         """
         Initializes the exception with custom bar_msg to be shown in message bar
@@ -23,7 +23,7 @@ class QgsPluginException(Exception):
         if message is None:
             message = self.default_msg
         super().__init__(message)
-        self.bar_msg = bar_msg
+        self.bar_msg: Dict[str, Any] = bar_msg if bar_msg is not None else {}
 
 
 class QgsPluginNetworkException(QgsPluginException):
