@@ -3,8 +3,9 @@
 import configparser
 from os.path import abspath, dirname, join, pardir
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
+from PyQt5.QtWidgets import QWidget
 from qgis.PyQt import uic
 
 __copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
@@ -166,7 +167,7 @@ def resources_path(*args: str) -> str:
     return path
 
 
-def load_ui(*args: str) -> Any:
+def load_ui(*args: str) -> QWidget:
     """Get compile UI file.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
