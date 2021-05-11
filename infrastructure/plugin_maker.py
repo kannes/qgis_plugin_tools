@@ -203,6 +203,10 @@ Put -h after command to see available optional arguments if any
         self.cp_parents(dst_dir, self.py_files)
         self.cp_parents(dst_dir, self.ui_files)
 
+
+    def package_new(self):
+        from qgis_plugin_ci
+
     def package(self):
         parser = ArgumentParser()
         parser.add_argument(
