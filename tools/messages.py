@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Optional
+import sys
+from typing import Any, Dict, Optional
 
 from .custom_logging import bar_msg
 from .resources import plugin_name
@@ -15,6 +16,12 @@ class MsgBar:
     bar_msg could be used like this:
     MsgBar.exception("main message", **bar_msg)
     """
+
+    KWARGS: Dict[str, Any] = (
+        {}
+        if sys.version_info.major == 3 and sys.version_info.minor < 8
+        else {"stacklevel": 2}
+    )
 
     @staticmethod
     def info(
@@ -33,7 +40,7 @@ class MsgBar:
         :param success: Whether the message is success message or not
         """
         LOGGER.info(
-            str(message), extra=bar_msg(details, duration, success), stacklevel=2
+            str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
 
     @staticmethod
@@ -53,7 +60,7 @@ class MsgBar:
         :param success: Whether the message is success message or not
         """
         LOGGER.warning(
-            str(message), extra=bar_msg(details, duration, success), stacklevel=2
+            str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
 
     @staticmethod
@@ -74,7 +81,7 @@ class MsgBar:
         :param success: Whether the message is success message or not
         """
         LOGGER.error(
-            str(message), extra=bar_msg(details, duration, success), stacklevel=2
+            str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
 
     @staticmethod
@@ -95,5 +102,5 @@ class MsgBar:
         :param success: Whether the message is success message or not
         """
         LOGGER.exception(
-            str(message), extra=bar_msg(details, duration, success), stacklevel=2
+            str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
