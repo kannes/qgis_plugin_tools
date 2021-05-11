@@ -159,7 +159,7 @@ plugin to QGIS plugin repository.
 
 ### Local release
 
-For local release follow these steps:
+For local release install [qgis-plugin-ci](https://github.com/opengisch/qgis-plugin-ci) and follow these steps:
 ```shell
 cd <repo>
 qgis-plugin-ci package  --disable-submodule-update 0.1.0
