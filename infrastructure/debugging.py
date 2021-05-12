@@ -7,7 +7,7 @@ __revision__ = "$Format:%H$"
 
 def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
     """
-    Setup pydevd degugging service
+    Setup pydevd debugging service
 
     Here is a sample (GlobeBuilder) Intellij Idea / PyCharm configuration for setting up the debug server in workspace.xml:
 
@@ -18,7 +18,7 @@ def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
       <PathMappingSettings>
         <option name="pathMappings">
           <list>
-            <mapping local-root="$PROJECT_DIR$/GlobeBuilder" remote-root="/home/user/.local/share/QGIS/QGIS3/profiles/default/python/plugins/GlobeBuilder" />
+            <mapping local-root="$PROJECT_DIR$/<plugin_name>" remote-root="/home/user/.local/share/QGIS/QGIS3/profiles/default/python/plugins/<plugin_name>" />
           </list>
         </option>
       </PathMappingSettings>

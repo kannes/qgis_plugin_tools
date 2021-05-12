@@ -11,7 +11,7 @@ As it's a submodule, you can configure your GIT to auto update the submodule com
 `git config --global submodule.recurse true`
 
 The module is helping you with:
-* [creating plugin from scratch](./README.md#For-new-plugin)
+* [creating plugin from scratch](#for-a-new-plugin)
 * [setting up some logging](docs/usage.md#Logging) (QgsMessageLog, file log, remote logs...)
 * [fetching resources](docs/usage.md#Resource-tools) in `resources` or other folders
 * [fetching compiled UI file](docs/usage.md#Resource-tools) in `resources/ui` folder
@@ -36,8 +36,8 @@ This will create needed structure for your plugin
     git remote add origin git@github.com:GispoCoding/test-plugin-name
 
     # Create a directory that is the name of your plugin WITHOUT '-' char
-    mkdir TestPlugin
-    cd TestPlugin
+    mkdir testplugin
+    cd testplugin
     git submodule add https://github.com/GispoCoding/qgis_plugin_tools
     cp qgis_plugin_tools/infrastructure/creator.py .
     # Create the plugin template. Replace with your information.
@@ -52,7 +52,7 @@ This will create needed structure for your plugin
 ### For existing plugin
 1. Go to the root folder of your plugin code source
 1. `git submodule add https://github.com/GispoCoding/qgis_plugin_tools.git`
-1. To get most out of the submodule, try to refactor the plugin to use the default [plugin tree](Plugin-tree-example)
+1. To get most out of the submodule, try to refactor the plugin to use the default [plugin tree](#Plugin-tree-example)
 
 
 ### Setting up development environment
@@ -74,7 +74,7 @@ Plugin `Foo` root folder:
     * `.gitattributes`
     * `.gitignore`
     * `.qgis-plugin-ci` # to use [qgis-plugin-ci](https://github.com/opengisch/qgis-plugin-ci)
-    * `plugin_name` # **no '-' character!**
+    * `pluginname` # **no '-' character!**
         * `.gitignore`
       * `qgis_plugins_tools/` # submodule
       * **`resources/`**
