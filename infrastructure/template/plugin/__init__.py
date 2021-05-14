@@ -2,8 +2,11 @@ import os  # noqa F401
 
 from qgis.gui import QgisInterface
 
-# <commented_out>from .qgis_plugin_tools.infrastructure.debugging import setup_pydevd, setup_ptvsd, setup_debugpy
-
+# <commented_out>from .qgis_plugin_tools.infrastructure.debugging import (
+# <commented_out>    setup_pydevd,
+# <commented_out>    setup_ptvsd,
+# <commented_out>    setup_debugpy,
+# <commented_out>)
 # <commented_out>debugger = os.environ.get("QGIS_PLUGIN_USE_DEBUGGER")
 # <commented_out>if debugger:
 # <commented_out>    if (
