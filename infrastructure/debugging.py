@@ -43,6 +43,50 @@ def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
     return succeeded
 
 
+def setup_ptvsd(host: str = "localhost", port: int = 5678) -> bool:
+    """
+    Setup ptvsd degugging service
+
+    Currently, debugging with VSCode requires the deprecated ptvsd library, due to a bug in debugpy:
+    https://github.com/microsoft/debugpy/issues/586
+
+    Here is a sample VSCode configuration for connecting to the debug server in launch.json:
+
+    {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Remote Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/<plugin_name>",
+                    "remoteRoot": "/Users/<user_name>/Library/Application Support/QGIS/QGIS3/profiles/edplanning/python/plugins/<plugin_name>"
+                }
+            ]
+        }
+    ]
+
+    :param host: host of the debug server
+    :param port: port of the debug server
+    :return: Whether debugger was initialized properly or not
+    """
+    succeeded = False
+    try:
+        import ptvsd
+
+        ptvsd.enable_attach((host, port))
+        succeeded = True
+    except Exception as e:
+        print("Unable to create ptvsd debugger: {}".format(e))
+    return succeeded
+
+
 def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
     """
     Setup debugpy degugging service
