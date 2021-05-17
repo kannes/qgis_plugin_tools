@@ -2,7 +2,7 @@ import logging
 import re
 import shutil
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 from urllib.parse import urlencode
 
 from PyQt5.QtCore import QByteArray, QSettings, QUrl
@@ -35,7 +35,10 @@ CONTENT_DISPOSITION_BYTE_HEADER = QByteArray(
 
 
 def fetch(
-    url: str, encoding: str = ENCODING, authcfg_id: str = "", params: dict = {}
+    url: str,
+    encoding: str = ENCODING,
+    authcfg_id: str = "",
+    params: Optional[Dict[str, str]] = None,
 ) -> str:
     """
     Fetch resource from the internet. Similar to requests.get(url) but is
