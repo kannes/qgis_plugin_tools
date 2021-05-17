@@ -3,6 +3,7 @@ import re
 import shutil
 from pathlib import Path
 from typing import Optional, Tuple
+from urllib.parse import urlencode
 
 from PyQt5.QtCore import QByteArray, QSettings, QUrl
 from PyQt5.QtNetwork import QNetworkReply, QNetworkRequest
@@ -33,15 +34,20 @@ CONTENT_DISPOSITION_BYTE_HEADER = QByteArray(
 )
 
 
-def fetch(url: str, encoding: str = ENCODING, authcfg_id: str = "") -> str:
+def fetch(
+    url: str, encoding: str = ENCODING, authcfg_id: str = "", params: dict = {}
+) -> str:
     """
     Fetch resource from the internet. Similar to requests.get(url) but is
     recommended way of handling requests in QGIS plugin
     :param url: address of the web resource
     :param encoding: Encoding which will be used to decode the bytes
     :param authcfg_id: authcfg id from QGIS settings, defaults to ''
+    :param params: Dictionary to send in the query string
     :return: encoded string of the content
     """
+    if params:
+        url += "?" + urlencode(params)
     content, _ = fetch_raw(url, encoding, authcfg_id)
     return content.decode(ENCODING)
 

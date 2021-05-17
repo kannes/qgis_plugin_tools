@@ -19,6 +19,11 @@ def test_fetch_invalid_url(new_project):
         fetch("invalidurl")
 
 
+def test_fetch_params(new_project):
+    data_model = fetch("https://www.gispo.fi/", params={"foo": "bar"})
+    assert len(data_model) > 10000
+
+
 @pytest.mark.skip(
     "file does not exist. "
     "TODO: search another file to be used using Content-Disposition"
