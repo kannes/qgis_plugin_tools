@@ -27,7 +27,13 @@ __copyright__ = (
 import logging
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
-from qgis.core import QgsProject, QgsRelationManager, QgsVectorLayer
+from qgis.core import (
+    QgsLayerTree,
+    QgsMapLayer,
+    QgsProject,
+    QgsRelationManager,
+    QgsVectorLayer,
+)
 from qgis.gui import QgsMapCanvas
 
 from .mock_qgis_classes import MockMessageBar
@@ -100,6 +106,8 @@ class QgisInterface(QObject):
         # noinspection PyArgumentList
         instance = QgsProject.instance()
         instance.removeAllMapLayers()
+        root: QgsLayerTree = instance.layerTreeRoot()
+        root.removeAllChildren()
         relation_manager: QgsRelationManager = instance.relationManager()
         for relation in relation_manager.relations():
             relation_manager.removeRelation(relation)
@@ -214,3 +222,9 @@ class QgisInterface(QObject):
 
     def getMockLayers(self):
         return self._layers
+
+    def setActiveLayer(self, layer: QgsMapLayer):
+        """
+        Set the active layer (layer gets selected in the legend)
+        """
+        pass
