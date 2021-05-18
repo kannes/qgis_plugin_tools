@@ -49,14 +49,15 @@ def fetch(
     :param params: Dictionary to send in the query string
     :return: encoded string of the content
     """
-    if params:
-        url += "?" + urlencode(params)
-    content, _ = fetch_raw(url, encoding, authcfg_id)
+    content, _ = fetch_raw(url, encoding, authcfg_id, params)
     return content.decode(ENCODING)
 
 
 def fetch_raw(
-    url: str, encoding: str = ENCODING, authcfg_id: str = ""
+    url: str,
+    encoding: str = ENCODING,
+    authcfg_id: str = "",
+    params: Optional[Dict[str, str]] = None,
 ) -> Tuple[bytes, str]:
     """
     Fetch resource from the internet. Similar to requests.get(url) but is
@@ -64,8 +65,11 @@ def fetch_raw(
     :param url: address of the web resource
     :param encoding: Encoding which will be used to decode the bytes
     :param authcfg_id: authcfg id from QGIS settings, defaults to ''
+    :param params: Dictionary to send in the query string
     :return: bytes of the content and default name of the file or empty string
     """
+    if params:
+        url += "?" + urlencode(params)
     LOGGER.debug(url)
     req = QNetworkRequest(QUrl(url))
     # http://osgeo-org.1560.x6.nabble.com/QGIS-Developer-Do-we-have-a-User-Agent-string-for-QGIS-td5360740.html
