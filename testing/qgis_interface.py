@@ -158,6 +158,17 @@ class QgisInterface(QObject):
         for item in layers:
             return layers[item]
 
+    def addPluginToMenu(self, name, action):
+        """Add plugin item to menu.
+
+        :param name: Name of the menu item
+        :type name: str
+
+        :param action: Action to add to menu.
+        :type action: QAction
+        """
+        pass
+
     def addToolBarIcon(self, action):
         """Add an icon to the plugins toolbar.
 
