@@ -1,9 +1,10 @@
 from typing import Dict, List
 
+from PyQt5.QtCore import QObject
 from qgis.core import Qgis
 
 
-class MockMessageBar:
+class MockMessageBar(QObject):
     def __init__(self) -> None:
         self.messages: Dict[int, List[str]] = {
             Qgis.Info: [],
@@ -21,6 +22,6 @@ class MockMessageBar:
         self.messages[level].append(msg)
 
 
-class MainWindow:
+class MainWindow(QObject):
     def blockSignals(self, *args):  # noqa N802
         pass
