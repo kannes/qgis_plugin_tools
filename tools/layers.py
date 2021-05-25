@@ -128,10 +128,9 @@ def evaluate_expressions(
     :return: evaluated value of the expression
     """
     context = QgsExpressionContext()
-    scopes = context_scopes if context_scopes else []
+    scopes = context_scopes if context_scopes is not None else []
 
     if layer:
-        # noinspection PyArgumentList
         scopes.append(QgsExpressionContextUtils.layerScope(layer))
     context.appendScopes(scopes)
     if feature:
@@ -139,7 +138,6 @@ def evaluate_expressions(
 
     value = exp.evaluate(context)
     if exp.hasParserError():
-        LOGGER.error(exp.parserErrorString())
         raise QgsPluginExpressionException(bar_msg=bar_msg(exp.parserErrorString()))
 
     if exp.hasEvalError():
