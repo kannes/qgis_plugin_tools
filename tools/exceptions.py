@@ -5,7 +5,7 @@ __revision__ = "$Format:%H$"
 
 from typing import Any, Dict, Optional
 
-from SpatialDataPackageExport.qgis_plugin_tools.tools.i18n import tr
+from .i18n import tr
 
 
 class QgsPluginException(Exception):

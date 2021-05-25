@@ -18,11 +18,10 @@ from qgis.core import (
     QgsVectorLayer,
     QgsWkbTypes,
 )
-from SpatialDataPackageExport.qgis_plugin_tools.tools.custom_logging import bar_msg
-from SpatialDataPackageExport.qgis_plugin_tools.tools.exceptions import (
-    QgsPluginExpressionException,
-)
-from SpatialDataPackageExport.qgis_plugin_tools.tools.resources import plugin_name
+
+from .custom_logging import bar_msg
+from .exceptions import QgsPluginExpressionException
+from .resources import plugin_name
 
 try:
     from qgis.core import QgsUnitTypes, QgsVectorLayerTemporalProperties
