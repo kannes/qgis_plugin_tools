@@ -5,6 +5,8 @@ __revision__ = "$Format:%H$"
 
 from typing import Any, Dict, Optional
 
+from SpatialDataPackageExport.qgis_plugin_tools.tools.i18n import tr
+
 
 class QgsPluginException(Exception):
     """ Use this as a base exception class in custom exceptions """
@@ -40,3 +42,7 @@ class QgsPluginVersionInInvalidFormat(QgsPluginException):
 
 class QgsPluginInvalidProjectSetting(QgsPluginException):
     pass
+
+
+class QgsPluginExpressionException(QgsPluginException):
+    default_msg = tr("There is an error in the expression")
