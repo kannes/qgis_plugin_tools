@@ -5,14 +5,30 @@ __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
-from typing import Set
+import logging
+from typing import List, Optional, Set, Union
 
-from qgis.core import QgsVectorLayer, QgsWkbTypes
+from qgis.core import (
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextScope,
+    QgsExpressionContextUtils,
+    QgsFeature,
+    QgsMapLayer,
+    QgsVectorLayer,
+    QgsWkbTypes,
+)
+
+from .custom_logging import bar_msg
+from .exceptions import QgsPluginExpressionException
+from .resources import plugin_name
 
 try:
     from qgis.core import QgsUnitTypes, QgsVectorLayerTemporalProperties
 except ImportError:
     QgsVectorLayerTemporalProperties = QgsUnitTypes = None
+
+LOGGER = logging.getLogger(plugin_name())
 
 POINT_TYPES = {
     QgsWkbTypes.Point,
@@ -95,3 +111,35 @@ def set_temporal_settings(
     tprops.setFixedDuration(time_step)
     tprops.setDurationUnits(unit)
     tprops.setIsActive(True)
+
+
+def evaluate_expressions(
+    exp: QgsExpression,
+    feature: Optional[QgsFeature] = None,
+    layer: Optional[QgsMapLayer] = None,
+    context_scopes: Optional[List[QgsExpressionContextScope]] = None,
+) -> Union[bool, int, str, float, None]:
+    """
+    Evaluate a QGIS expression
+    :param exp: QGIS expression
+    :param feature: Optional QgsFeature
+    :param layer: Optional QgsMapLayer
+    :param context_scopes: Optional list of QgsExpressionContextScopes
+    :return: evaluated value of the expression
+    """
+    context = QgsExpressionContext()
+    scopes = context_scopes if context_scopes is not None else []
+
+    if layer:
+        scopes.append(QgsExpressionContextUtils.layerScope(layer))
+    context.appendScopes(scopes)
+    if feature:
+        context.setFeature(feature)
+
+    value = exp.evaluate(context)
+    if exp.hasParserError():
+        raise QgsPluginExpressionException(bar_msg=bar_msg(exp.parserErrorString()))
+
+    if exp.hasEvalError():
+        raise QgsPluginExpressionException(bar_msg=bar_msg(exp.evalErrorString()))
+    return value

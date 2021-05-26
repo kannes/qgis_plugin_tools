@@ -39,9 +39,12 @@ class MsgBar:
             by the user.
         :param success: Whether the message is success message or not
         """
+
         LOGGER.info(
             str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
+        if details != "":
+            LOGGER.info(str(details), **MsgBar.KWARGS)
 
     @staticmethod
     def warning(
@@ -62,6 +65,8 @@ class MsgBar:
         LOGGER.warning(
             str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
+        if details != "":
+            LOGGER.warning(str(details), **MsgBar.KWARGS)
 
     @staticmethod
     def error(
@@ -83,6 +88,8 @@ class MsgBar:
         LOGGER.error(
             str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
+        if details != "":
+            LOGGER.error(str(details), **MsgBar.KWARGS)
 
     @staticmethod
     def exception(
@@ -104,3 +111,5 @@ class MsgBar:
         LOGGER.exception(
             str(message), extra=bar_msg(details, duration, success), **MsgBar.KWARGS
         )
+        if details != "":
+            LOGGER.error(str(details), **MsgBar.KWARGS)
