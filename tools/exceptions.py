@@ -5,6 +5,8 @@ __revision__ = "$Format:%H$"
 
 from typing import Any, Dict, Optional
 
+from PyQt5.QtNetwork import QNetworkReply
+
 from .i18n import tr
 
 
@@ -24,12 +26,24 @@ class QgsPluginException(Exception):
         """
         if message is None:
             message = self.default_msg
+        self.message = message
         super().__init__(message)
         self.bar_msg: Dict[str, Any] = bar_msg if bar_msg is not None else {}
 
 
 class QgsPluginNetworkException(QgsPluginException):
-    pass
+    default_msg = "A network error occurred."
+
+    def __init__(
+        self, *args, error: Optional[QNetworkReply.NetworkError] = None, **kwargs
+    ) -> None:
+        """
+        Initializes the exception with error details so the plugin may process
+        different network exceptions differently.
+        :param status: The QNetworkReply error type
+        """
+        self.error = error
+        super().__init__(*args, **kwargs)
 
 
 class QgsPluginNotImplementedException(QgsPluginException):
