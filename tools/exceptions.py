@@ -35,7 +35,10 @@ class QgsPluginNetworkException(QgsPluginException):
     default_msg = tr("A network error occurred.")
 
     def __init__(
-        self, *args, error: Optional[QNetworkReply.NetworkError] = None, **kwargs
+        self,
+        *args: Any,
+        error: Optional[QNetworkReply.NetworkError] = None,
+        **kwargs: Any,
     ) -> None:
         """
         Initializes the exception with error details so the plugin may process
