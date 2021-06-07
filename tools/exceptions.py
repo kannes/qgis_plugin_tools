@@ -60,9 +60,6 @@ class QgsPluginVersionInInvalidFormat(QgsPluginException):
 class QgsPluginInvalidProjectSetting(QgsPluginException):
     pass
 
-class QgsPluginLayerException(QgsPluginException):
-    pass
-
 
 class QgsPluginExpressionException(QgsPluginException):
     default_msg = tr("There is an error in the expression")

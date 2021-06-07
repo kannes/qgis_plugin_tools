@@ -21,10 +21,8 @@ from qgis.core import (
 
 from .custom_logging import bar_msg
 from .exceptions import QgsPluginExpressionException
-from .resources import plugin_name
-
-from .exceptions import QgsPluginLayerException
 from .i18n import tr
+from .resources import plugin_name
 
 try:
     from qgis.core import QgsUnitTypes, QgsVectorLayerTemporalProperties
@@ -157,7 +155,7 @@ def get_field_index(layer: QgsVectorLayer, field_name: str) -> int:
     """
     field_index = layer.fields().indexFromName(field_name)
     if field_index == -1:
-        raise QgsPluginLayerException(
+        raise KeyError(
             tr(
                 "Field name {} does not exist in layer {}",
                 field_name,
