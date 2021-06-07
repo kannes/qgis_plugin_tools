@@ -21,6 +21,7 @@ from qgis.core import (
 
 from .custom_logging import bar_msg
 from .exceptions import QgsPluginExpressionException
+from .i18n import tr
 from .resources import plugin_name
 
 try:
@@ -143,3 +144,22 @@ def evaluate_expressions(
     if exp.hasEvalError():
         raise QgsPluginExpressionException(bar_msg=bar_msg(exp.evalErrorString()))
     return value
+
+
+def get_field_index(layer: QgsVectorLayer, field_name: str) -> int:
+    """
+    Get field index if exists
+    :param layer: QgsVectorLayer
+    :param field_name: name of the field
+    :return: index of the field
+    """
+    field_index = layer.fields().indexFromName(field_name)
+    if field_index == -1:
+        raise KeyError(
+            tr(
+                "Field name {} does not exist in layer {}",
+                field_name,
+                layer.name(),
+            )
+        )
+    return field_index
