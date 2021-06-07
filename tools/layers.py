@@ -23,6 +23,9 @@ from .custom_logging import bar_msg
 from .exceptions import QgsPluginExpressionException
 from .resources import plugin_name
 
+from .exceptions import QgsPluginLayerException
+from .i18n import tr
+
 try:
     from qgis.core import QgsUnitTypes, QgsVectorLayerTemporalProperties
 except ImportError:
@@ -143,3 +146,22 @@ def evaluate_expressions(
     if exp.hasEvalError():
         raise QgsPluginExpressionException(bar_msg=bar_msg(exp.evalErrorString()))
     return value
+
+
+def get_field_index(layer: QgsVectorLayer, field_name: str) -> int:
+    """
+    Get field index if exists
+    :param layer: QgsVectorLayer
+    :param field_name: name of the field
+    :return: index of the field
+    """
+    field_index = layer.fields().indexFromName(field_name)
+    if field_index == -1:
+        raise QgsPluginLayerException(
+            tr(
+                "Field name {} does not exist in layer {}",
+                field_name,
+                layer.name(),
+            )
+        )
+    return field_index
