@@ -26,6 +26,7 @@ def is_windows():
 
 PLUGINNAME = plugin_name()
 
+PLUGIN_PACKAGE_NAME = Path(__file__).parent.parent.parent.resolve().name
 SUBMODULES = ["qgis_plugin_tools"]
 
 # Add files for any locales you want to support here
@@ -136,7 +137,7 @@ class PluginMaker:
         self.pyrcc = pyrcc
         self.qgis_dir = os.path.join(dr, "QGIS", "QGIS3", "profiles", profile)
         self.plugin_dir = os.path.join(
-            str(Path.home()), self.qgis_dir, "python", "plugins", PLUGINNAME
+            str(Path.home()), self.qgis_dir, "python", "plugins", PLUGIN_PACKAGE_NAME
         )
         self.submodules = submodules
         VERBOSE = verbose
