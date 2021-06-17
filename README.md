@@ -11,7 +11,6 @@ As it's a submodule, you can configure your GIT to auto update the submodule com
 `git config --global submodule.recurse true`
 
 The module is helping you with:
-* [creating plugin from scratch](#for-a-new-plugin)
 * [setting up some logging](docs/usage.md#Logging) (QgsMessageLog, file log, remote logs...)
 * [fetching resources](docs/usage.md#Resource-tools) in `resources` or other folders
 * [fetching compiled UI file](docs/usage.md#Resource-tools) in `resources/ui` folder
@@ -27,25 +26,8 @@ The module is helping you with:
 ### For a new plugin
 This will create needed structure for your plugin
 
-1. Create new repository in Github/Gitlab (here using: https://github.com/GispoCoding/test-plugin-name)
-1. Follow these steps
-    ```shell script
-    mkdir test-plugin-name
-    cd test-plugin-name
-    git init
-    git remote add origin git@github.com:GispoCoding/test-plugin-name
-
-    # Create a directory that is the name of your plugin WITHOUT '-' char
-    mkdir testplugin
-    cd testplugin
-    git submodule add https://github.com/GispoCoding/qgis_plugin_tools
-    cp qgis_plugin_tools/infrastructure/creator.py .
-    # Create the plugin template. Replace with your information.
-    # On Windows you might want to use Python shipped with QGIS (eq. C:\OSGeo4W64\bin\python-qgis.bat)
-    python creator.py -o GispoCoding -r test-plugin-name -u https://github.com
-    rm creator.py
-    cd ..
-    ```
+1. Create new plugin using [cookiecutter-qgis-plugin](https://github.com/GispoCoding/cookiecutter-qgis-plugin).
+   This will automatically initialize git add qgis_plugin_tools as a submodule to the plugin.
 1. Next set up the [development environment](infrastructure/template/root/docs/development.md#Setting-up-development-environment),
    edit metadata.txt with description etc. and commit changes.
 
@@ -85,8 +67,8 @@ Plugin `Foo` root folder:
           * `main_dialog.ui`
         * `icons/`
           * `my_icon.svg`
-      * `test/`
       * `__init__.py`
       * `foo.py`
       * `metadata.txt`
       * `build.py`
+    * `test/`
