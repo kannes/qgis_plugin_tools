@@ -10,8 +10,8 @@ import configparser
 
 import pytest
 
+from ..testing.utilities import is_running_in_tools_module_ci
 from ..tools.resources import plugin_path
-from .utilities import is_running_in_tools_module_ci
 
 __copyright__ += "Disaster Reduction"
 
