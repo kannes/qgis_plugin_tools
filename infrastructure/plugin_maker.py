@@ -12,7 +12,6 @@ from typing import List
 from zipfile import ZipFile
 
 from ..tools.resources import plugin_name, plugin_path, resources_path
-from .plugin_creator import ROOT_DIR, PluginCreator
 
 __copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
@@ -27,6 +26,8 @@ def is_windows():
 PLUGINNAME = plugin_name()
 
 PLUGIN_PACKAGE_NAME = Path(__file__).parent.parent.parent.resolve().name
+ROOT_DIR = str(Path(__file__).parent.parent.parent.parent.resolve())
+
 SUBMODULES = ["qgis_plugin_tools"]
 
 # Add files for any locales you want to support here
@@ -50,6 +51,8 @@ EXTRAS = ["metadata.txt"]
 EXTRA_DIRS = ["resources"]
 
 COMPILED_RESOURCE_FILES = ["resources.py"]
+
+VENV_NAME = ".venv"
 
 """
 #################################################
@@ -82,6 +85,14 @@ set QT_PLUGIN_PATH=%QGIS_PREFIX_PATH%\qtplugins;%OSGEO4W_ROOT%\apps\Qt5\plugins
 set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHONPATH%
 
 start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
+"""
+
+VENV_CREATION_SCRIPT = """
+python -m venv --system-site-packages --clear {venv_path}
+{source}{activator}
+python -m pip install --upgrade pip
+python -m pip install -r {requirements}
+pre-commit install
 """
 
 # self.qgis_dir points to the location where your plugin should be installed.
@@ -339,9 +350,44 @@ Put -h after command to see available optional arguments if any
             self.run_command(args, force_show_output=True)
 
     def venv(self):
-        print("Creating virtual env")
-        creator = PluginCreator("", "", "", True)
-        creator.create_venv()
+        try:
+            from qgis.core import QgsVectorLayer
+        except ImportError:
+            print("Your python environment has no access to QGIS libraries!")
+            return
+
+        if is_windows():
+            env = os.environ.copy()
+            env[
+                "PATH"
+            ] += f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
+        else:
+            env = os.environ
+
+        print("Installing virtual environment")
+        requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
+        script = VENV_CREATION_SCRIPT.format(
+            venv_path=os.path.join(ROOT_DIR, VENV_NAME),
+            source="source " if not is_windows() else "",
+            activator=os.path.join(
+                ROOT_DIR,
+                VENV_NAME,
+                "bin" if not is_windows() else "Scripts",
+                "activate",
+            ),
+            requirements=requirements,
+        )
+
+        process = subprocess.Popen(
+            "cmd.exe" if is_windows() else "sh",
+            shell=False,
+            universal_newlines=True,
+            stdin=subprocess.PIPE,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            env=env,
+        )
+        process.communicate(script)
 
     @staticmethod
     def run_command(args, d=None, force_show_output=False):
