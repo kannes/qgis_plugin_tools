@@ -58,7 +58,6 @@ LINE_TYPES = {
     QgsWkbTypes.MultiLineStringZ,
     QgsWkbTypes.MultiLineStringZM,
 }
-
 POLYGON_TYPES = {
     QgsWkbTypes.Polygon,
     QgsWkbTypes.Polygon25D,
@@ -67,7 +66,14 @@ POLYGON_TYPES = {
     QgsWkbTypes.PolygonZ,
     QgsWkbTypes.PolygonZM,
     QgsWkbTypes.MultiPolygon,
+    QgsWkbTypes.MultiPolygon25D,
+    QgsWkbTypes.MultiPolygonM,
+    QgsWkbTypes.MultiPolygonZ,
+    QgsWkbTypes.MultiPolygonZM,
     QgsWkbTypes.CurvePolygon,
+    QgsWkbTypes.CurvePolygonM,
+    QgsWkbTypes.CurvePolygonZ,
+    QgsWkbTypes.CurvePolygonZM,
 }
 
 
@@ -76,7 +82,7 @@ class LayerType(enum.Enum):
     Point = {"wkb_types": POINT_TYPES}
     Line = {"wkb_types": LINE_TYPES}
     Polygon = {"wkb_types": POLYGON_TYPES}
-    Unknown = {}  # type: ignore
+    Unknown = {"wkb_types": set()}  # type: ignore
 
     @staticmethod
     def from_layer(layer: QgsVectorLayer) -> "LayerType":
