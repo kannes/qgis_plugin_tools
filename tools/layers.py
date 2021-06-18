@@ -34,46 +34,19 @@ LOGGER = logging.getLogger(plugin_name())
 POINT_TYPES = {
     QgsWkbTypes.Point,
     QgsWkbTypes.PointGeometry,
-    QgsWkbTypes.PointM,
-    QgsWkbTypes.Point25D,
-    QgsWkbTypes.PointZ,
-    QgsWkbTypes.PointZM,
     QgsWkbTypes.MultiPoint,
-    QgsWkbTypes.MultiPoint25D,
-    QgsWkbTypes.MultiPointM,
-    QgsWkbTypes.MultiPointZ,
-    QgsWkbTypes.MultiPointZM,
 }
 
 LINE_TYPES = {
     QgsWkbTypes.LineGeometry,
     QgsWkbTypes.LineString,
-    QgsWkbTypes.LineString25D,
-    QgsWkbTypes.LineStringM,
-    QgsWkbTypes.LineStringZ,
-    QgsWkbTypes.LineStringZM,
     QgsWkbTypes.MultiLineString,
-    QgsWkbTypes.MultiLineString25D,
-    QgsWkbTypes.MultiLineStringM,
-    QgsWkbTypes.MultiLineStringZ,
-    QgsWkbTypes.MultiLineStringZM,
 }
 POLYGON_TYPES = {
     QgsWkbTypes.Polygon,
-    QgsWkbTypes.Polygon25D,
     QgsWkbTypes.PolygonGeometry,
-    QgsWkbTypes.PolygonM,
-    QgsWkbTypes.PolygonZ,
-    QgsWkbTypes.PolygonZM,
     QgsWkbTypes.MultiPolygon,
-    QgsWkbTypes.MultiPolygon25D,
-    QgsWkbTypes.MultiPolygonM,
-    QgsWkbTypes.MultiPolygonZ,
-    QgsWkbTypes.MultiPolygonZM,
     QgsWkbTypes.CurvePolygon,
-    QgsWkbTypes.CurvePolygonM,
-    QgsWkbTypes.CurvePolygonZ,
-    QgsWkbTypes.CurvePolygonZM,
 }
 
 
@@ -87,7 +60,7 @@ class LayerType(enum.Enum):
     @staticmethod
     def from_layer(layer: QgsVectorLayer) -> "LayerType":
         for l_type in LayerType:
-            if layer.wkbType() in l_type.wkb_types:
+            if QgsWkbTypes.flatType(layer.wkbType()) in l_type.wkb_types:
                 return l_type
         return LayerType.Unknown
 
