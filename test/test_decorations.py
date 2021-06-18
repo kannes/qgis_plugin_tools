@@ -8,7 +8,6 @@ from qgis.core import Qgis
 from ..tools.custom_logging import bar_msg
 from ..tools.decorations import log_if_fails
 from ..tools.exceptions import QgsPluginNotImplementedException
-from .conftest import IFACE  # type: ignore
 
 
 class MockClass:
@@ -23,15 +22,15 @@ class MockClass:
         )
 
 
-def test_logging_if_fails(initialize_logger):
+def test_logging_if_fails(initialize_logger, iface):
     MockClass().method_that_shows_msg()
 
-    messages = IFACE.messageBar().get_messages(Qgis.Critical)
+    messages = iface.messageBar().get_messages(Qgis.Critical)
     assert "Error message:Please implement" in messages
 
 
-def test_logging_if_fails_without_details(initialize_logger):
+def test_logging_if_fails_without_details(initialize_logger, iface):
     MockClass().method_that_fails()
 
-    messages = IFACE.messageBar().get_messages(Qgis.Critical)
+    messages = iface.messageBar().get_messages(Qgis.Critical)
     assert "Unhandled exception occurred:Error message" in messages
