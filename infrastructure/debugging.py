@@ -5,6 +5,7 @@ __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
 import os
+import shutil
 import sys
 
 
@@ -134,7 +135,7 @@ def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
             os.environ["QGIS_DEBUGPY_HAS_LOADED"] = "1"
             import debugpy
 
-            debugpy.configure(python=sys.executable)
+            debugpy.configure(python=shutil.which("python"))
             debugpy.listen((host, port))
             succeeded = True
         except Exception as e:
