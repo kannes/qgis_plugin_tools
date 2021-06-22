@@ -27,7 +27,7 @@ The module is helping you with:
 This will create needed structure for your plugin
 
 1. Create new plugin using [cookiecutter-qgis-plugin](https://github.com/GispoCoding/cookiecutter-qgis-plugin).
-   This will automatically initialize git add qgis_plugin_tools as a submodule to the plugin.
+   This will automatically initialize git and add qgis_plugin_tools as a submodule for the plugin.
 1. Next set up the [development environment](infrastructure/template/root/docs/development.md#Setting-up-development-environment),
    edit metadata.txt with description etc. and commit changes.
 
