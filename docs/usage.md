@@ -119,10 +119,10 @@ Plugin can connect to already running debug server with following code in the pl
 Check out comments in [debugging.py](../infrastructure/debugging.py).
 
 ```python
-from .qgis_plugin_tools.infrastructure.debugging import setup_pydevd
+from .qgis_plugin_tools.infrastructure.debugging import setup_pydevd, setup_debugpy
 
 # It is a good idea to set up an environment variable to control this. Like:
-# if os.environ.get('QGIS_PLUGIN_DEBUGGER') == 'pydevd':
+# if os.environ.get('QGIS_PLUGIN_USE_DEBUGGER') == 'pydevd':
 setup_pydevd()
 ```
 
