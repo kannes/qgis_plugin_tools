@@ -130,9 +130,6 @@ def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
     succeeded = False
     if _check_if_should_setup() and not os.environ.get("QGIS_DEBUGPY_HAS_LOADED"):
         try:
-            # extra guard for debugpy not to setup it twice
-            # (causes debugging session to hang)
-            os.environ["QGIS_DEBUGPY_HAS_LOADED"] = "1"
             import debugpy
 
             debugpy.configure(python=shutil.which("python"))
@@ -140,4 +137,9 @@ def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
             succeeded = True
         except Exception as e:
             print("Unable to create debugpy debugger: {}".format(e))
+        else:
+            # extra guard for debugpy not to setup it twice
+            # (causes debugging session to hang)
+            os.environ["QGIS_DEBUGPY_HAS_LOADED"] = "1"
+
     return succeeded
