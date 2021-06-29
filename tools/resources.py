@@ -5,15 +5,15 @@ from os.path import abspath, dirname, join, pardir
 from pathlib import Path
 from typing import Dict, Optional
 
-from PyQt5.QtWidgets import QWidget
 from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QWidget
 
 __copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
-from qgis._core import QgsApplication
+from qgis.core import QgsApplication
 
 PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""

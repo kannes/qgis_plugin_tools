@@ -41,9 +41,9 @@ def get_qgis_app():  # noqa
     """
 
     try:
-        from PyQt5 import QtCore, QtWidgets
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
+        from qgis.PyQt import QtCore, QtWidgets
 
         from .qgis_interface import QgisInterface
     except ImportError:

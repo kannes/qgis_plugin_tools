@@ -1,7 +1,7 @@
 from typing import Dict, List
 
-from PyQt5.QtCore import QObject
 from qgis.core import Qgis
+from qgis.PyQt.QtCore import QObject
 
 
 class MockMessageBar(QObject):
