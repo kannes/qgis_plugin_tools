@@ -3,8 +3,8 @@ __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
-from PyQt5.QtWidgets import QWidget
 from qgis.PyQt import Qsci
+from qgis.PyQt.QtWidgets import QWidget
 
 
 class JsonEditor(Qsci.QsciScintilla):

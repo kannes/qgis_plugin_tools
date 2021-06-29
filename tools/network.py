@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 from urllib.parse import urlencode
 
-from PyQt5.QtCore import QByteArray, QSettings, QUrl
-from PyQt5.QtNetwork import QNetworkReply, QNetworkRequest
 from qgis.core import Qgis, QgsBlockingNetworkRequest, QgsNetworkReplyContent
+from qgis.PyQt.QtCore import QByteArray, QSettings, QUrl
+from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 from ..tools.exceptions import QgsPluginNetworkException
 from ..tools.i18n import tr

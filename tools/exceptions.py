@@ -5,7 +5,7 @@ __revision__ = "$Format:%H$"
 
 from typing import Any, Dict, Optional
 
-from PyQt5.QtNetwork import QNetworkReply
+from qgis.PyQt.QtNetwork import QNetworkReply
 
 from .i18n import tr
 

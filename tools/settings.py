@@ -1,8 +1,7 @@
-from os.path import join
 from typing import Any, Optional, Union
 
-from PyQt5.QtCore import QVariant
 from qgis.core import QgsExpressionContextUtils, QgsProject, QgsSettings
+from qgis.PyQt.QtCore import QVariant
 
 from .exceptions import QgsPluginInvalidProjectSetting
 from .resources import plugin_name
@@ -14,7 +13,7 @@ def setting_key(*args: str) -> str:
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
     """
-    return join("/", plugin_name(), *map(str, args))
+    return "/" + "/".join((plugin_name(), *map(str, args)))
 
 
 def get_setting(
