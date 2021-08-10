@@ -421,7 +421,7 @@ Put -h after command to see available optional arguments if any
             dirs.append(os.path.dirname(file))
         dirs.sort(reverse=True)
         for i in range(len(dirs)):
-            if not dirs[i] in dirs[i - 1]:
+            if not dirs[i] + os.sep in dirs[i - 1]:
                 need_dir = os.path.normpath(target_dir + dirs[i])
                 echo("mkdir", need_dir)
                 os.makedirs(need_dir, exist_ok=True)
