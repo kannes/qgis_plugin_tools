@@ -89,6 +89,7 @@ start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
 
 VENV_CREATION_SCRIPT = """
 python -m venv --system-site-packages --clear {venv_path}
+{qgis_path_fix}
 {source}{activator}
 python -m pip install --upgrade pip
 python -m pip install -r {requirements}
@@ -268,7 +269,9 @@ Put -h after command to see available optional arguments if any
 
     def start_ide(self):
         if not is_windows():
-            print("This command is only meant to run on Windows environment.")
+            print(
+                "This command is only meant to run on Windows environment with QGIS < 3.16.8."
+            )
             return
         parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         parser.add_argument(
@@ -367,8 +370,15 @@ Put -h after command to see available optional arguments if any
 
         print("Installing virtual environment")
         requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
+        venv_path = os.path.join(ROOT_DIR, VENV_NAME)
+        qgis_path_fix = (
+            'python -c "import pathlib;'
+            "import qgis;"
+            "print(str((pathlib.Path(qgis.__file__)/'../..').resolve()))\" "
+            f"> {os.path.join(venv_path, 'qgis.pth')}"
+        )
         script = VENV_CREATION_SCRIPT.format(
-            venv_path=os.path.join(ROOT_DIR, VENV_NAME),
+            venv_path=venv_path,
             source="source " if not is_windows() else "",
             activator=os.path.join(
                 ROOT_DIR,
@@ -376,6 +386,7 @@ Put -h after command to see available optional arguments if any
                 "bin" if not is_windows() else "Scripts",
                 "activate",
             ),
+            qgis_path_fix=qgis_path_fix if is_windows() else "",
             requirements=requirements,
         )
 
