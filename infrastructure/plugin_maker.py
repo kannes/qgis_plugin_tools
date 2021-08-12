@@ -358,9 +358,10 @@ Put -h after command to see available optional arguments if any
 
         if is_windows():
             env = os.environ.copy()
-            env[
-                "PATH"
-            ] += f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
+            env["PATH"] += (
+                f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
+                ";C:\\Program Files\\Git\\cmd"
+            )
         else:
             env = os.environ
 
