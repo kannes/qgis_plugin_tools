@@ -4,6 +4,7 @@
 import logging
 import os
 import sys
+import warnings
 
 from osgeo import gdal
 from qgis.core import Qgis
@@ -39,7 +40,10 @@ def get_qgis_app():  # noqa
 
     If QGIS is already running the handle to that app will be returned.
     """
-
+    warnings.warn(
+        "get_qgis_app() will be deprecated. Use library pytest-qgis instead.",
+        PendingDeprecationWarning,
+    )
     try:
         from qgis.core import QgsApplication
         from qgis.gui import QgsMapCanvas
@@ -54,7 +58,7 @@ def get_qgis_app():  # noqa
     if QGIS_APP is None:
         gui_flag = True  # All test will run qgis in gui mode
         # noinspection PyPep8Naming
-        QGIS_APP = QgsApplication([bytes(arg, "utf-8") for arg in sys.argv], gui_flag)
+        QGIS_APP = QgsApplication([], gui_flag)
         # Make sure QGIS_PREFIX_PATH is set in your env if needed!
         QGIS_APP.initQgis()
         s = QGIS_APP.showSettings()
