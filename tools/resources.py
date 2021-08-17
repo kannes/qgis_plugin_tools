@@ -1,7 +1,7 @@
 """Tools to work with resource files."""
 
 import configparser
-from os.path import abspath, dirname, join, pardir
+from os.path import abspath, dirname, exists, join, pardir
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -144,7 +144,10 @@ def plugin_test_data_path(*args: str) -> str:
     :return: Absolute path to the resources folder.
     :rtype: str
     """
-    path = abspath(abspath(join(plugin_path(), "test", "data")))
+
+    path = abspath(abspath(join(root_path(), "test", "data")))
+    if not exists(path):
+        path = abspath(abspath(join(plugin_path(), "test", "data")))
     for item in args:
         path = abspath(join(path, item))
 
