@@ -14,6 +14,7 @@ from qgis.core import (
     QgsExpressionContextScope,
     QgsExpressionContextUtils,
     QgsFeature,
+    QgsGeometry,
     QgsMapLayer,
     QgsVectorLayer,
     QgsWkbTypes,
@@ -33,18 +34,15 @@ LOGGER = logging.getLogger(plugin_name())
 
 POINT_TYPES = {
     QgsWkbTypes.Point,
-    QgsWkbTypes.PointGeometry,
     QgsWkbTypes.MultiPoint,
 }
 
 LINE_TYPES = {
-    QgsWkbTypes.LineGeometry,
     QgsWkbTypes.LineString,
     QgsWkbTypes.MultiLineString,
 }
 POLYGON_TYPES = {
     QgsWkbTypes.Polygon,
-    QgsWkbTypes.PolygonGeometry,
     QgsWkbTypes.MultiPolygon,
     QgsWkbTypes.CurvePolygon,
 }
@@ -58,11 +56,19 @@ class LayerType(enum.Enum):
     Unknown = {"wkb_types": set()}  # type: ignore
 
     @staticmethod
-    def from_layer(layer: QgsVectorLayer) -> "LayerType":
+    def from_wkb_type(wkb_type: int) -> "LayerType":
         for l_type in LayerType:
-            if QgsWkbTypes.flatType(layer.wkbType()) in l_type.wkb_types:
+            if QgsWkbTypes.flatType(wkb_type) in l_type.wkb_types:
                 return l_type
         return LayerType.Unknown
+
+    @staticmethod
+    def from_layer(layer: QgsVectorLayer) -> "LayerType":
+        return LayerType.from_wkb_type(layer.wkbType())
+
+    @staticmethod
+    def from_geometry(geometry: QgsGeometry) -> "LayerType":
+        return LayerType.from_wkb_type(geometry.wkbType())
 
     @property
     def wkb_types(self) -> Set[QgsWkbTypes.GeometryType]:
