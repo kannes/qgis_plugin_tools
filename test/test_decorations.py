@@ -22,15 +22,15 @@ class MockClass:
         )
 
 
-def test_logging_if_fails(initialize_logger, iface):
+def test_logging_if_fails(initialize_logger, qgis_iface):
     MockClass().method_that_shows_msg()
 
-    messages = iface.messageBar().get_messages(Qgis.Critical)
+    messages = qgis_iface.messageBar().get_messages(Qgis.Critical)
     assert "Error message:Please implement" in messages
 
 
-def test_logging_if_fails_without_details(initialize_logger, iface):
+def test_logging_if_fails_without_details(initialize_logger, qgis_iface):
     MockClass().method_that_fails()
 
-    messages = iface.messageBar().get_messages(Qgis.Critical)
+    messages = qgis_iface.messageBar().get_messages(Qgis.Critical)
     assert "Unhandled exception occurred:Error message" in messages
