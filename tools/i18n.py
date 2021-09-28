@@ -52,6 +52,7 @@ def tr(
     text: str,
     *args: Any,
     context: str = "@default",
+    **kwargs: Any,
 ) -> str:
     """Get the translation for a string using Qt translation API.
 
@@ -60,8 +61,9 @@ def tr(
     :param text: String for translation.
     :param args: arguments to use in formatting.
     :param context: Context of the translation.
+    :param kwargs: keyword arguments to use in formatting.
 
     :returns: Translated version of message.
     """
     # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-    return QApplication.translate(context, text).format(*args)
+    return QApplication.translate(context, text).format(*args, **kwargs)
