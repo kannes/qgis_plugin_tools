@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtWidgets import QDialog, QWidget
 
 __copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
@@ -170,8 +170,17 @@ def resources_path(*args: str) -> str:
     return path
 
 
+def qgis_plugin_tools_resources(*args: str) -> str:
+    """ Get the path within the qgis_plugin_tools submodule """
+    path = abspath(abspath(join(plugin_path(), "qgis_plugin_tools", "resources")))
+    for item in args:
+        path = abspath(join(path, item))
+
+    return path
+
+
 def load_ui(*args: str) -> QWidget:
-    """Get compile UI file.
+    """Get compiled UI file.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
     :type args: str
@@ -180,3 +189,17 @@ def load_ui(*args: str) -> QWidget:
     """
     ui_class, _ = uic.loadUiType(resources_path("ui", *args))
     return ui_class
+
+
+def ui_file_dialog(*ui_file_name_parts: str):  # noqa ANN201
+    """ DRY helper for building classes from a .ui file """
+
+    class UiFileDialogClass(QDialog, load_ui(*ui_file_name_parts)):  # type: ignore
+        def __init__(
+            self,
+            parent: Optional[QWidget],
+        ) -> None:
+            super().__init__(parent)
+            self.setupUi(self)  # provided by load_ui FORM_CLASS
+
+    return UiFileDialogClass

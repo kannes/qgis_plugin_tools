@@ -349,7 +349,7 @@ Put -h after command to see available optional arguments if any
         for locale in self.locales:
             fil = os.path.join(resources_path("i18n"), f"{locale}.ts")
             echo(f"Processing {fil}")
-            args = pre_args + [self.lrelease, "-qt=qt5", fil]
+            args = pre_args + [self.lrelease, fil]
             self.run_command(args, force_show_output=True)
 
     def venv(self):
