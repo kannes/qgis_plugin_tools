@@ -25,7 +25,7 @@ def function_that_shows_msg():
 
 @taskify
 def function_that_runs_as_a_task(arg, kwarg=None):
-    for i in range(10):
+    for _ in range(10):
         time.sleep(0.01)
     return arg, kwarg
 
@@ -43,7 +43,7 @@ class MockClass:
 
     @taskify
     def method_that_runs_as_a_task(self):
-        for i in range(10):
+        for _ in range(10):
             time.sleep(0.01)
         return True
 
@@ -88,4 +88,4 @@ def test_taskify_method(task_runner: TestTaskRunner):
     success = task_runner.run_task(task)
 
     assert success
-    assert task.result == True
+    assert task.result is True

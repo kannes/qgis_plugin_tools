@@ -4,11 +4,15 @@ from qgis.core import Qgis
 
 from ..testing.utilities import TestTask, TestTaskRunner
 from ..tools.exceptions import QgsPluginException, TaskInterruptedException
-from ..tools.tasks import BaseTask, FunctionTask
+from ..tools.tasks import FunctionTask
+
+__copyright__ = "Copyright 2021, qgis_plugin_tools contributors"
+__license__ = "GPL version 3"
+__email__ = "info@gispo.fi"
 
 
-def fn(*args, **kwargs):
-    for i in range(10):
+def fn(*args, **kwargs):  # noqa
+    for _ in range(10):
         time.sleep(0.01)
     return args, kwargs
 
@@ -29,8 +33,8 @@ def test_run_simple_task_canceled(task_runner: TestTaskRunner, qgis_iface):
     assert not success
     assert task_runner.fail
     assert (
-        "Task TestTask was not successful:Task was cancelled by user or some dependency tasks failed"
-        in messages
+        "Task TestTask was not successful:"
+        "Task was cancelled by user or some dependency tasks failed" in messages
     )
 
 

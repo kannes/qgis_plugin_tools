@@ -1,12 +1,16 @@
 import time
 
 import pytest
-from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QCoreApplication
 
 from ...testing.utilities import TestTask
 from ...tools.exceptions import TaskInterruptedException
 from ...widgets import progress_dialog
+
+__copyright__ = "Copyright 2021, qgis_plugin_tools contributors"
+__license__ = "GPL version 3"
+__email__ = "info@gispo.fi"
 
 
 @pytest.mark.parametrize("show_abort_btn", [True, False])

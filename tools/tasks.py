@@ -10,6 +10,10 @@ from .resources import plugin_name
 
 LOGGER = logging.getLogger(plugin_name())
 
+__copyright__ = "Copyright 2021, qgis_plugin_tools contributors"
+__license__ = "GPL version 3"
+__email__ = "info@gispo.fi"
+
 
 class BaseTask(QgsTask):
     """
