@@ -2,7 +2,12 @@
 """Common functionality used by regression tests."""
 
 import os
+import time
 import warnings
+from typing import Union
+
+from qgis.core import QgsApplication, QgsTask
+from qgis.PyQt.QtCore import QCoreApplication
 
 from ..tools.exceptions import QgsPluginNotImplementedException
 
@@ -37,3 +42,45 @@ def qgis_supports_temporal() -> bool:
         return True
     except ImportError:
         return False
+
+
+class TestTaskRunner:
+    """
+    This utility class could be used when running tasks in tests.
+    """
+
+    success = False
+    fail = False
+    progress = 0.0
+
+    def completed(self) -> None:
+        self.success = True
+
+    def terminated(self) -> None:
+        self.fail = True
+
+    def set_progress(self, progress: float) -> None:
+        self.progress = progress
+
+    def run_task(
+        self,
+        task: QgsTask,
+        cancel: bool = False,
+        sleep_before_cancel: Union[int, float] = 0.0,
+    ) -> bool:
+        """
+        Run task and return whether it was successful or not.
+        """
+        task.taskCompleted.connect(self.completed)
+        task.taskTerminated.connect(self.terminated)
+        task.progressChanged.connect(self.set_progress)
+        QgsApplication.taskManager().addTask(task)
+
+        if cancel:
+            time.sleep(sleep_before_cancel)
+            task.cancel()
+
+        while not self.success and not self.fail:
+            QCoreApplication.processEvents()
+
+        return self.success
