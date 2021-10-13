@@ -3,7 +3,7 @@ __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
-from qgis._core import QgsWkbTypes
+from qgis.core import QgsWkbTypes
 
 from ..tools.layers import LayerType
 

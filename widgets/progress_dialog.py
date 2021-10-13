@@ -21,6 +21,7 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from ..tools.decorations import log_if_fails
 from ..tools.i18n import tr
 from ..tools.resources import plugin_name, qgis_plugin_tools_resources
 
@@ -79,6 +80,7 @@ class ProgressDialog(QDialog, FORM_CLASS):
         LOGGER.warning("Closing progress bar, aborting")
         self.aborted.emit()
 
+    @log_if_fails
     def _aborted(self) -> None:
         LOGGER.warning("Aborted")
         self.close()

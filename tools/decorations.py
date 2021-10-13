@@ -21,7 +21,11 @@ def log_if_fails(fn: Callable) -> Callable:
     @wraps(fn)
     def wrapper(*args: Any, **kwargs: Any) -> None:  # noqa: ANN001
         try:
-            fn(*args, **kwargs)
+            # Qt injects False into some signals
+            if args[1:] != (False,):
+                fn(*args, **kwargs)
+            else:
+                fn(*args[:-1], **kwargs)
         except QgsPluginException as e:
             MsgBar.exception(e, **e.bar_msg)
         except Exception as e:
