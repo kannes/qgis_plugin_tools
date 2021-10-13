@@ -172,11 +172,7 @@ def resources_path(*args: str) -> str:
 
 def qgis_plugin_tools_resources(*args: str) -> str:
     """ Get the path within the qgis_plugin_tools submodule """
-    path = abspath(abspath(join(plugin_path(), "qgis_plugin_tools", "resources")))
-    for item in args:
-        path = abspath(join(path, item))
-
-    return path
+    return str(Path(__file__, "..", "..", "resources", *args).resolve().absolute())
 
 
 def load_ui(*args: str) -> QWidget:

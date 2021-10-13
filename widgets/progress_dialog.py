@@ -1,4 +1,4 @@
-__copyright__ = "Copyright 2020-2021, Gispo Ltd"
+__copyright__ = "Copyright 2021, qgis_plugin_tools contributors"
 __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 
