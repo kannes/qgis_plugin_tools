@@ -2,25 +2,9 @@ import time
 
 from qgis.core import Qgis
 
-from ..testing.utilities import TestTaskRunner
+from ..testing.utilities import TestTask, TestTaskRunner
 from ..tools.exceptions import QgsPluginException, TaskInterruptedException
 from ..tools.tasks import BaseTask, FunctionTask
-
-
-class TestTask(BaseTask):
-    def __init__(self, will_fail: bool = False, error_to_raise=ValueError):
-        super().__init__()
-        self._will_fail = will_fail
-        self._error_to_raise = error_to_raise
-
-    def _run(self) -> bool:
-        for i in range(10):
-            self.setProgress(i * 10)
-            if self._will_fail:
-                raise self._error_to_raise("custom failure")
-            self._check_if_canceled()
-            time.sleep(0.01)
-        return True
 
 
 def fn(*args, **kwargs):

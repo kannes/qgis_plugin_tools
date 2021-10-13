@@ -4,15 +4,15 @@
 import os
 import time
 import warnings
-from typing import Union
+from typing import Type, Union
 
 from qgis.core import QgsApplication, QgsTask
 from qgis.PyQt.QtCore import QCoreApplication
 
 from ..tools.exceptions import QgsPluginNotImplementedException
+from ..tools.tasks import BaseTask
 
 
-# noinspection PyUnresolvedReferences
 def get_qgis_app():  # noqa
     warnings.warn(
         "get_qgis_app() is deprecated. Use library pytest-qgis instead.",
@@ -84,3 +84,31 @@ class TestTaskRunner:
             QCoreApplication.processEvents()
 
         return self.success
+
+
+class TestTask(BaseTask):
+    """
+    Test task to used in tests needing a simple task.
+    """
+
+    def __init__(
+        self,
+        will_fail: bool = False,
+        error_to_raise: Type[Exception] = ValueError,
+        steps: int = 10,
+        sleep_time: float = 0.01,
+    ) -> None:
+        super().__init__()
+        self._will_fail = will_fail
+        self._error_to_raise = error_to_raise
+        self._steps = steps
+        self._sleep_time = sleep_time
+
+    def _run(self) -> bool:
+        for i in range(self._steps):
+            self.setProgress(i * self._steps)
+            if self._will_fail:
+                raise self._error_to_raise("custom failure")
+            self._check_if_canceled()
+            time.sleep(self._sleep_time)
+        return True
