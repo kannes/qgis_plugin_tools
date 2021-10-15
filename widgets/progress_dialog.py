@@ -7,7 +7,7 @@ from typing import Callable, Optional
 
 from qgis.core import QgsApplication, QgsTask
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QCoreApplication, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtGui import QCloseEvent
 from qgis.PyQt.QtWidgets import (
     QDialog,
@@ -67,13 +67,11 @@ class ProgressDialog(QDialog, FORM_CLASS):
     def set_status(self, status_text: str) -> None:
         LOGGER.debug(f"Status:   {status_text}")
         self.status_label.setText(status_text)
-        QCoreApplication.processEvents()
 
     def update_progress_bar(self, progress: float) -> None:
         """ Update progress bar with a progress """
         LOGGER.debug(f"Progress {progress}")
         self.progress_bar.setValue(min(100.0, progress))
-        QCoreApplication.processEvents()
 
     def closeEvent(self, close_event: QCloseEvent) -> None:  # noqa: N802
         super().closeEvent(close_event)
@@ -102,6 +100,26 @@ def create_simple_continuous_progress_dialog(
     return progress_dialog
 
 
+def run_task_with_progress_dialog(
+    task: QgsTask,
+    status_text: str,
+    parent: Optional[QDialog] = None,
+    show_abort_button: bool = False,
+    abort_btn_text: str = ProgressDialog.abort_btn_text,
+    completed_callback: Optional[Callable] = None,
+    terminated_callback: Optional[Callable] = None,
+) -> None:
+    """
+    Runs a given task while showing a progress bar dialog.
+    """
+    progress_dialog = ProgressDialog(parent, show_abort_button, abort_btn_text)
+    progress_dialog.set_status(status_text)
+    task.progressChanged.connect(progress_dialog.update_progress_bar)
+    _make_connections_and_run_task(
+        progress_dialog, task, completed_callback, terminated_callback
+    )
+
+
 def run_task_with_continuous_progress_dialog(
     task: QgsTask,
     status_text: str,
@@ -117,18 +135,25 @@ def run_task_with_continuous_progress_dialog(
     progress_dialog = create_simple_continuous_progress_dialog(
         status_text, parent, show_abort_button, abort_btn_text
     )
+    _make_connections_and_run_task(
+        progress_dialog, task, completed_callback, terminated_callback
+    )
 
+
+def _make_connections_and_run_task(
+    progress_dialog: ProgressDialog,
+    task: QgsTask,
+    completed_callback: Optional[Callable],
+    terminated_callback: Optional[Callable],
+) -> None:
     task.taskCompleted.connect(lambda: progress_dialog.close())
     task.taskTerminated.connect(lambda: progress_dialog.close())
     progress_dialog.aborted.connect(task.cancel)
-
     if completed_callback:
         task.taskCompleted.connect(completed_callback)
     if terminated_callback:
         task.taskTerminated.connect(terminated_callback)
-
     task_manager = QgsApplication.taskManager()
     task_manager.addTask(task)
-
     # Wait until task is either completed or terminated
     progress_dialog.exec()

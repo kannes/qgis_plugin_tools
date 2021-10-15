@@ -57,17 +57,22 @@ def test_create_simple_continuous_progress_dialog(qtbot, show_abort_btn):
 
 @pytest.mark.parametrize("show_abort_btn", [True, False])
 @pytest.mark.parametrize("should_abort", [True, False])
-def test_run_task_with_continuous_progress_dialog(
-    qtbot, show_abort_btn, should_abort, mocker
+@pytest.mark.parametrize("continuous", [True, False])
+def test_run_task_with_progress_dialog(
+    qtbot, show_abort_btn, should_abort, continuous, mocker
 ):
     # setup
     aborted = False
     terminated = False
     completed = False
 
-    p_dialog = progress_dialog.create_simple_continuous_progress_dialog(
-        "Mocking", show_abort_button=show_abort_btn
-    )
+    if continuous:
+        p_dialog = progress_dialog.create_simple_continuous_progress_dialog(
+            "Mocking", show_abort_button=show_abort_btn
+        )
+    else:
+        p_dialog = progress_dialog.ProgressDialog(show_abort_button=show_abort_btn)
+        p_dialog.set_status("Mocking")
 
     def complete():
         nonlocal completed
@@ -87,7 +92,7 @@ def test_run_task_with_continuous_progress_dialog(
 
     m_progress_bar = mocker.patch.object(
         progress_dialog,
-        "create_simple_continuous_progress_dialog",
+        "ProgressDialog",
         return_value=p_dialog,
         autospec=True,
     )
@@ -98,13 +103,22 @@ def test_run_task_with_continuous_progress_dialog(
     task = TestTask(sleep_time=0.005)
 
     # test
-    progress_dialog.run_task_with_continuous_progress_dialog(
-        task,
-        "Processing",
-        show_abort_button=show_abort_btn,
-        completed_callback=complete,
-        terminated_callback=terminate,
-    )
+    if continuous:
+        progress_dialog.run_task_with_continuous_progress_dialog(
+            task,
+            "Processing",
+            show_abort_button=show_abort_btn,
+            completed_callback=complete,
+            terminated_callback=terminate,
+        )
+    else:
+        progress_dialog.run_task_with_progress_dialog(
+            task,
+            "Processing",
+            show_abort_button=show_abort_btn,
+            completed_callback=complete,
+            terminated_callback=terminate,
+        )
 
     while not aborted and not completed and not terminated:
         QCoreApplication.processEvents()
@@ -117,6 +131,8 @@ def test_run_task_with_continuous_progress_dialog(
         assert isinstance(task.exception, TaskInterruptedException)
     else:
         assert task.exception is None
+    if not continuous and not should_abort:
+        assert p_dialog.progress_bar.value() == 100.0
     assert aborted == should_abort
     assert completed != should_abort
     assert not terminated
