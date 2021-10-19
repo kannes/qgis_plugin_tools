@@ -1,6 +1,7 @@
 """Setting up logging using QGIS, file, Sentry..."""
 
 import logging
+import warnings
 from enum import Enum, unique
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -352,6 +353,10 @@ def setup_task_logger(logger_name: str) -> logging.Logger:
     :param logger_name: The logger name that we want to set up.
     """
 
+    warnings.warn(
+        "setup_task_logger() will be deprecated. Use setup_logger() instead.",
+        PendingDeprecationWarning,
+    )
     stream_level = get_log_level(LogTarget.STREAM)
     logger = logging.getLogger(f"{logger_name}_task")
     logger.setLevel(stream_level)

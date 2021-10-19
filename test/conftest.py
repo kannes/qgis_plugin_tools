@@ -8,10 +8,16 @@ __revision__ = "$Format:%H$"
 
 import pytest
 
-from ..tools.custom_logging import setup_logger
+from ..testing.utilities import TestTaskRunner
+from ..tools.custom_logging import setup_logger, teardown_logger
 from ..tools.resources import plugin_name
 
 
 @pytest.fixture(scope="session")
 def initialize_logger(qgis_iface):
     setup_logger(plugin_name(), qgis_iface)
+
+
+@pytest.fixture()
+def task_runner(initialize_logger):
+    return TestTaskRunner()

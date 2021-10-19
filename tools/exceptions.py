@@ -63,3 +63,7 @@ class QgsPluginInvalidProjectSetting(QgsPluginException):
 
 class QgsPluginExpressionException(QgsPluginException):
     default_msg = tr("There is an error in the expression")
+
+
+class TaskInterruptedException(QgsPluginException):
+    pass
