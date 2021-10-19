@@ -55,7 +55,10 @@ class BaseTask(QgsTask):
         :param result: the return value from self.run
         """
         if result:
-            LOGGER.debug(tr("Task {} ended successfully!", self.name))
+            LOGGER.debug(
+                f"Task {self.name} ended successfully in "
+                f"{self.elapsedTime() / 1000:.2f}!"
+            )
             pass
         else:
             if self.exception is None:
