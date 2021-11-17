@@ -1,84 +1,26 @@
 # coding=utf-8
 """Common functionality used by regression tests."""
 
-import logging
 import os
-import sys
+import time
+import warnings
+from typing import Type, Union
 
-from osgeo import gdal
-from qgis.core import Qgis
-from qgis.PyQt import Qt
+from qgis.core import QgsApplication, QgsTask
+from qgis.PyQt.QtCore import QCoreApplication
 
-from .mock_qgis_classes import MainWindow, MockMessageBar
-
-LOGGER = logging.getLogger("QGIS")
-QGIS_APP = None  # Static variable used to hold hand to running QGIS app
-CANVAS = None
-PARENT = None
-IFACE = None
+from ..tools.exceptions import QgsPluginNotImplementedException
+from ..tools.tasks import BaseTask
 
 
-def pytest_report_header(config) -> str:  # noqa: ANN001
-    """Used by PyTest and Unittest."""
-    # noinspection PyUnresolvedReferences
-    message = "QGIS : {}\n".format(Qgis.QGIS_VERSION_INT)
-    message += "Python GDAL : {}\n".format(gdal.VersionInfo("VERSION_NUM"))
-    message += "Python : {}\n".format(sys.version)
-    # message += 'Python path : {}'.format(sys.path)
-    message += "QT : {}".format(Qt.QT_VERSION_STR)
-    return message
-
-
-# noinspection PyUnresolvedReferences
 def get_qgis_app():  # noqa
-    """Start one QGIS application to test against.
-
-    :returns: Handle to QGIS app, canvas, new_project and parent. If there are any
-        errors the tuple members will be returned as None.
-    :rtype: (QgsApplication, CANVAS, IFACE, PARENT)
-
-    If QGIS is already running the handle to that app will be returned.
-    """
-
-    try:
-        from PyQt5 import QtCore, QtWidgets
-        from qgis.core import QgsApplication
-        from qgis.gui import QgsMapCanvas
-
-        from .qgis_interface import QgisInterface
-    except ImportError:
-        return None, None, None, None
-
-    global QGIS_APP  # pylint: disable=W0603
-
-    if QGIS_APP is None:
-        gui_flag = True  # All test will run qgis in gui mode
-        # noinspection PyPep8Naming
-        QGIS_APP = QgsApplication([bytes(arg, "utf-8") for arg in sys.argv], gui_flag)
-        # Make sure QGIS_PREFIX_PATH is set in your env if needed!
-        QGIS_APP.initQgis()
-        s = QGIS_APP.showSettings()
-        LOGGER.debug(s)
-
-    global PARENT  # pylint: disable=W0603
-    if PARENT is None:
-        # noinspection PyPep8Naming
-        PARENT = QtWidgets.QWidget()
-
-    global CANVAS  # pylint: disable=W0603
-    if CANVAS is None:
-        # noinspection PyPep8Naming
-        CANVAS = QgsMapCanvas(PARENT)
-        CANVAS.resize(QtCore.QSize(400, 400))
-
-    global IFACE  # pylint: disable=W0603
-    if IFACE is None:
-        # QgisInterface is a stub implementation of the QGIS plugin interface
-        # noinspection PyPep8Naming
-        IFACE = QgisInterface(CANVAS, MockMessageBar(), MainWindow())
-
-    # print(pytest_report_header(None))
-    return QGIS_APP, CANVAS, IFACE, PARENT
+    warnings.warn(
+        "get_qgis_app() is deprecated. Use library pytest-qgis instead.",
+        DeprecationWarning,
+    )
+    raise QgsPluginNotImplementedException(
+        "get_qgis_app() is deprecated. Use library pytest-qgis instead."
+    )
 
 
 def is_running_inside_ci() -> bool:
@@ -100,3 +42,73 @@ def qgis_supports_temporal() -> bool:
         return True
     except ImportError:
         return False
+
+
+class TestTaskRunner:
+    """
+    This utility class could be used when running tasks in tests.
+    """
+
+    success = False
+    fail = False
+    progress = 0.0
+
+    def completed(self) -> None:
+        self.success = True
+
+    def terminated(self) -> None:
+        self.fail = True
+
+    def set_progress(self, progress: float) -> None:
+        self.progress = progress
+
+    def run_task(
+        self,
+        task: QgsTask,
+        cancel: bool = False,
+        sleep_before_cancel: Union[int, float] = 0.0,
+    ) -> bool:
+        """
+        Run task and return whether it was successful or not.
+        """
+        task.taskCompleted.connect(self.completed)
+        task.taskTerminated.connect(self.terminated)
+        task.progressChanged.connect(self.set_progress)
+        QgsApplication.taskManager().addTask(task)
+
+        if cancel:
+            time.sleep(sleep_before_cancel)
+            task.cancel()
+
+        while not self.success and not self.fail:
+            QCoreApplication.processEvents()
+
+        return self.success
+
+
+class TestTask(BaseTask):
+    """
+    Test task to used in tests needing a simple task.
+    """
+
+    def __init__(
+        self,
+        will_fail: bool = False,
+        error_to_raise: Type[Exception] = ValueError,
+        steps: int = 10,
+        sleep_time: float = 0.01,
+    ) -> None:
+        super().__init__()
+        self._will_fail = will_fail
+        self._error_to_raise = error_to_raise
+        self._steps = steps
+        self._sleep_time = sleep_time
+
+    def _run(self) -> bool:
+        for i in range(self._steps):
+            self.setProgress(i * self._steps)
+            if self._will_fail:
+                raise self._error_to_raise("custom failure")
+            self._check_if_canceled()
+            time.sleep(self._sleep_time)
+        return True

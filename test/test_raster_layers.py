@@ -6,16 +6,16 @@ __revision__ = "$Format:%H$"
 import datetime
 
 import pytest
-from PyQt5.QtCore import QDateTime, Qt
 from qgis.core import QgsDateTimeRange, QgsRasterLayer, QgsSingleBandGrayRenderer
+from qgis.PyQt.QtCore import QDateTime, Qt
 
+from ..testing.utilities import qgis_supports_temporal
 from ..tools.network import download_to_file
 from ..tools.raster_layers import (
     set_band_based_on_range,
     set_fixed_temporal_range,
     set_raster_renderer_to_singleband,
 )
-from .utilities import qgis_supports_temporal
 
 
 @pytest.fixture

@@ -1,19 +1,19 @@
 """Tools to work with resource files."""
 
 import configparser
-from os.path import abspath, dirname, join, pardir
+from os.path import abspath, dirname, exists, join, pardir
 from pathlib import Path
 from typing import Dict, Optional
 
-from PyQt5.QtWidgets import QWidget
 from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog, QWidget
 
 __copyright__ = "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 __revision__ = "$Format:%H$"
 
-from qgis._core import QgsApplication
+from qgis.core import QgsApplication
 
 PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""
@@ -144,7 +144,10 @@ def plugin_test_data_path(*args: str) -> str:
     :return: Absolute path to the resources folder.
     :rtype: str
     """
-    path = abspath(abspath(join(plugin_path(), "test", "data")))
+
+    path = abspath(abspath(join(root_path(), "test", "data")))
+    if not exists(path):
+        path = abspath(abspath(join(plugin_path(), "test", "data")))
     for item in args:
         path = abspath(join(path, item))
 
@@ -167,8 +170,13 @@ def resources_path(*args: str) -> str:
     return path
 
 
+def qgis_plugin_tools_resources(*args: str) -> str:
+    """ Get the path within the qgis_plugin_tools submodule """
+    return str(Path(__file__, "..", "..", "resources", *args).resolve().absolute())
+
+
 def load_ui(*args: str) -> QWidget:
-    """Get compile UI file.
+    """Get compiled UI file.
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
     :type args: str
@@ -177,3 +185,17 @@ def load_ui(*args: str) -> QWidget:
     """
     ui_class, _ = uic.loadUiType(resources_path("ui", *args))
     return ui_class
+
+
+def ui_file_dialog(*ui_file_name_parts: str):  # noqa ANN201
+    """ DRY helper for building classes from a .ui file """
+
+    class UiFileDialogClass(QDialog, load_ui(*ui_file_name_parts)):  # type: ignore
+        def __init__(
+            self,
+            parent: Optional[QWidget],
+        ) -> None:
+            super().__init__(parent)
+            self.setupUi(self)  # provided by load_ui FORM_CLASS
+
+    return UiFileDialogClass

@@ -4,6 +4,15 @@ __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
+import os
+import shutil
+import sys
+
+
+def _check_if_should_setup() -> bool:
+    """ Check whether to connect to debug server or not """
+    return "pytest" not in sys.modules and not os.environ.get("QGIS_PLUGIN_IN_CI")
+
 
 def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
     """
@@ -32,13 +41,14 @@ def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
     :return: Whether debugger was initialized properly or not
     """
     succeeded = False
-    try:
-        import pydevd
+    if _check_if_should_setup():
+        try:
+            import pydevd
 
-        pydevd.settrace(host, port=port, stdoutToServer=True, stderrToServer=True)
-        succeeded = True
-    except Exception as e:
-        print("Unable to create pydevd debugger: {}".format(e))
+            pydevd.settrace(host, port=port, stdoutToServer=True, stderrToServer=True)
+            succeeded = True
+        except Exception as e:
+            print("Unable to create pydevd debugger: {}".format(e))
 
     return succeeded
 
@@ -46,9 +56,6 @@ def setup_pydevd(host: str = "localhost", port: int = 5678) -> bool:
 def setup_ptvsd(host: str = "localhost", port: int = 5678) -> bool:
     """
     Setup ptvsd degugging service
-
-    Currently, debugging with VSCode requires the deprecated ptvsd library, due to a bug in debugpy:
-    https://github.com/microsoft/debugpy/issues/586
 
     Here is a sample VSCode configuration for connecting to the debug server in launch.json:
 
@@ -70,37 +77,69 @@ def setup_ptvsd(host: str = "localhost", port: int = 5678) -> bool:
                 }
             ]
         }
-    ]
+      ]
+    }
 
     :param host: host of the debug server
     :param port: port of the debug server
     :return: Whether debugger was initialized properly or not
     """
     succeeded = False
-    try:
-        import ptvsd
+    if _check_if_should_setup():
+        try:
+            import ptvsd
 
-        ptvsd.enable_attach((host, port))
-        succeeded = True
-    except Exception as e:
-        print("Unable to create ptvsd debugger: {}".format(e))
+            ptvsd.enable_attach((host, port))
+            succeeded = True
+        except Exception as e:
+            print("Unable to create ptvsd debugger: {}".format(e))
     return succeeded
 
 
 def setup_debugpy(host: str = "localhost", port: int = 5678) -> bool:
     """
-    Setup debugpy degugging service
+    Setup debugpy debugging service
+
+    Here is a sample VSCode configuration for connecting to the debug server in launch.json:
+
+    {
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Remote Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}/<plugin_name>",
+                    "remoteRoot": "/Users/<user_name>/Library/Application Support/QGIS/QGIS3/profiles/edplanning/python/plugins/<plugin_name>"
+                }
+            ]
+        }
+      ]
+    }
 
     :param host: host of the debug server
     :param port: port of the debug server
     :return: Whether debugger was initialized properly or not
     """
     succeeded = False
-    try:
-        import debugpy
+    if _check_if_should_setup() and not os.environ.get("QGIS_DEBUGPY_HAS_LOADED"):
+        try:
+            import debugpy
 
-        debugpy.listen((host, port))
-        succeeded = True
-    except Exception as e:
-        print("Unable to create debugpy debugger: {}".format(e))
+            debugpy.configure(python=shutil.which("python"))
+            debugpy.listen((host, port))
+            succeeded = True
+        except Exception as e:
+            print("Unable to create debugpy debugger: {}".format(e))
+        else:
+            # extra guard for debugpy not to setup it twice
+            # (causes debugging session to hang)
+            os.environ["QGIS_DEBUGPY_HAS_LOADED"] = "1"
+
     return succeeded

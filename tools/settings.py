@@ -1,8 +1,7 @@
-from os.path import join
 from typing import Any, Optional, Union
 
-from PyQt5.QtCore import QVariant
 from qgis.core import QgsExpressionContextUtils, QgsProject, QgsSettings
+from qgis.PyQt.QtCore import QVariant
 
 from .exceptions import QgsPluginInvalidProjectSetting
 from .resources import plugin_name
@@ -14,7 +13,7 @@ def setting_key(*args: str) -> str:
 
     :param args List of path elements e.g. ['img', 'logos', 'image.png']
     """
-    return join("/", plugin_name(), *map(str, args))
+    return "/" + "/".join((plugin_name(), *map(str, args)))
 
 
 def get_setting(
@@ -22,6 +21,7 @@ def get_setting(
     default: Optional[Any] = None,
     typehint: type = None,
     internal: bool = True,
+    section: int = QgsSettings.NoSection,
 ) -> Union[QVariant, str]:
     """
     Get QGIS setting value plugin
@@ -30,9 +30,11 @@ def get_setting(
     :param default: Optional default value
     :param typehint: Type hint
     :param internal: Whether to search from only plugin settings or all
+    :param section: Section argument can be used to get a value from
+    a specific Section.
     """
     s = QgsSettings()
-    kwargs = {"defaultValue": default}
+    kwargs = {"defaultValue": default, "section": section}
 
     if typehint is not None:
         kwargs["type"] = typehint
@@ -40,7 +42,10 @@ def get_setting(
 
 
 def set_setting(
-    key: str, value: Union[str, int, float, bool], internal: bool = True
+    key: str,
+    value: Union[str, int, float, bool],
+    internal: bool = True,
+    section: int = QgsSettings.NoSection,
 ) -> bool:
     """
     Set a value in the QgsSetting
@@ -48,9 +53,10 @@ def set_setting(
     :param key: Key for the setting
     :param value: Value for the setting
     :param internal: Whether to search from only plugin settings or all
+    :param section: Section argument can be used to set a value to a specific Section
     """
     qs = QgsSettings()
-    return qs.setValue(setting_key(key) if internal else key, value)
+    return qs.setValue(setting_key(key) if internal else key, value, section)
 
 
 def get_project_setting(

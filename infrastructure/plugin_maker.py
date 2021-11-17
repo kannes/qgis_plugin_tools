@@ -12,7 +12,6 @@ from typing import List
 from zipfile import ZipFile
 
 from ..tools.resources import plugin_name, plugin_path, resources_path
-from .plugin_creator import ROOT_DIR, PluginCreator
 
 __copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"
@@ -25,6 +24,9 @@ def is_windows():
 
 
 PLUGINNAME = plugin_name()
+
+PLUGIN_PACKAGE_NAME = Path(__file__).parent.parent.parent.resolve().name
+ROOT_DIR = str(Path(__file__).parent.parent.parent.parent.resolve())
 
 SUBMODULES = ["qgis_plugin_tools"]
 
@@ -49,6 +51,8 @@ EXTRAS = ["metadata.txt"]
 EXTRA_DIRS = ["resources"]
 
 COMPILED_RESOURCE_FILES = ["resources.py"]
+
+VENV_NAME = ".venv"
 
 """
 #################################################
@@ -81,6 +85,15 @@ set QT_PLUGIN_PATH=%QGIS_PREFIX_PATH%\qtplugins;%OSGEO4W_ROOT%\apps\Qt5\plugins
 set PYTHONPATH=%QGIS_PREFIX_PATH%\python;%OSGEO4W_ROOT%\apps\Qt5\plugins;%PYTHONPATH%
 
 start "Start your IDE aware of QGIS" /B %IDE% %REPOSITORY%
+"""
+
+VENV_CREATION_SCRIPT = """
+python -m venv --system-site-packages --clear {venv_path}
+{qgis_path_fix}
+{source}{activator}
+python -m pip install --upgrade pip
+python -m pip install -r {requirements}
+pre-commit install
 """
 
 # self.qgis_dir points to the location where your plugin should be installed.
@@ -136,7 +149,7 @@ class PluginMaker:
         self.pyrcc = pyrcc
         self.qgis_dir = os.path.join(dr, "QGIS", "QGIS3", "profiles", profile)
         self.plugin_dir = os.path.join(
-            str(Path.home()), self.qgis_dir, "python", "plugins", PLUGINNAME
+            str(Path.home()), self.qgis_dir, "python", "plugins", PLUGIN_PACKAGE_NAME
         )
         self.submodules = submodules
         VERBOSE = verbose
@@ -256,7 +269,9 @@ Put -h after command to see available optional arguments if any
 
     def start_ide(self):
         if not is_windows():
-            print("This command is only meant to run on Windows environment.")
+            print(
+                "This command is only meant to run on Windows environment with QGIS < 3.16.8."
+            )
             return
         parser = ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
         parser.add_argument(
@@ -334,13 +349,57 @@ Put -h after command to see available optional arguments if any
         for locale in self.locales:
             fil = os.path.join(resources_path("i18n"), f"{locale}.ts")
             echo(f"Processing {fil}")
-            args = pre_args + [self.lrelease, "-qt=qt5", fil]
+            args = pre_args + [self.lrelease, fil]
             self.run_command(args, force_show_output=True)
 
     def venv(self):
-        print("Creating virtual env")
-        creator = PluginCreator("", "", "", True)
-        creator.create_venv()
+        try:
+            from qgis.core import QgsVectorLayer
+        except ImportError:
+            print("Your python environment has no access to QGIS libraries!")
+            return
+
+        if is_windows():
+            env = os.environ.copy()
+            env["PATH"] += (
+                f';{os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Git", "cmd")}'
+                ";C:\\Program Files\\Git\\cmd"
+            )
+        else:
+            env = os.environ
+
+        print("Installing virtual environment")
+        requirements = os.path.join(ROOT_DIR, "requirements-dev.txt")
+        venv_path = os.path.join(ROOT_DIR, VENV_NAME)
+        qgis_path_fix = (
+            'python -c "import pathlib;'
+            "import qgis;"
+            "print(str((pathlib.Path(qgis.__file__)/'../..').resolve()))\" "
+            f"> {os.path.join(venv_path, 'qgis.pth')}"
+        )
+        script = VENV_CREATION_SCRIPT.format(
+            venv_path=venv_path,
+            source="source " if not is_windows() else "",
+            activator=os.path.join(
+                ROOT_DIR,
+                VENV_NAME,
+                "bin" if not is_windows() else "Scripts",
+                "activate",
+            ),
+            qgis_path_fix=qgis_path_fix if is_windows() else "",
+            requirements=requirements,
+        )
+
+        process = subprocess.Popen(
+            "cmd.exe" if is_windows() else "sh",
+            shell=False,
+            universal_newlines=True,
+            stdin=subprocess.PIPE,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            env=env,
+        )
+        process.communicate(script)
 
     @staticmethod
     def run_command(args, d=None, force_show_output=False):
@@ -374,7 +433,7 @@ Put -h after command to see available optional arguments if any
             dirs.append(os.path.dirname(file))
         dirs.sort(reverse=True)
         for i in range(len(dirs)):
-            if not dirs[i] in dirs[i - 1]:
+            if not dirs[i] + os.sep in dirs[i - 1]:
                 need_dir = os.path.normpath(target_dir + dirs[i])
                 echo("mkdir", need_dir)
                 os.makedirs(need_dir, exist_ok=True)

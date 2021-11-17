@@ -5,9 +5,9 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 from urllib.parse import urlencode
 
-from PyQt5.QtCore import QByteArray, QSettings, QUrl
-from PyQt5.QtNetwork import QNetworkReply, QNetworkRequest
 from qgis.core import Qgis, QgsBlockingNetworkRequest, QgsNetworkReplyContent
+from qgis.PyQt.QtCore import QByteArray, QSettings, QUrl
+from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 from ..tools.exceptions import QgsPluginNetworkException
 from ..tools.i18n import tr
@@ -87,8 +87,18 @@ def fetch_raw(
     reply: QgsNetworkReplyContent = request_blocking.reply()
     reply_error = reply.error()
     if reply_error != QNetworkReply.NoError:
+        # Error content will be empty in older QGIS versions:
+        # https://github.com/qgis/QGIS/issues/42442
+        message = (
+            bytes(reply.content()).decode("utf-8")
+            if len(bytes(reply.content()))
+            else None
+        )
+        # bar_msg will just show a generic Qt error string.
         raise QgsPluginNetworkException(
-            tr("Request failed"), bar_msg=bar_msg(reply.errorString())
+            message=message,
+            error=reply_error,
+            bar_msg=bar_msg(reply.errorString()),
         )
 
     # https://stackoverflow.com/a/39103880/10068922

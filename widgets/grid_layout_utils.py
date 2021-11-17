@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGridLayout, QLayoutItem
+from qgis.PyQt.QtWidgets import QGridLayout, QLayoutItem
 
 __copyright__ = "Copyright 2020-2021, Gispo Ltd"
 __license__ = "GPL version 3"

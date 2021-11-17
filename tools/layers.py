@@ -14,6 +14,7 @@ from qgis.core import (
     QgsExpressionContextScope,
     QgsExpressionContextUtils,
     QgsFeature,
+    QgsGeometry,
     QgsMapLayer,
     QgsVectorLayer,
     QgsWkbTypes,
@@ -21,6 +22,7 @@ from qgis.core import (
 
 from .custom_logging import bar_msg
 from .exceptions import QgsPluginExpressionException
+from .i18n import tr
 from .resources import plugin_name
 
 try:
@@ -32,39 +34,15 @@ LOGGER = logging.getLogger(plugin_name())
 
 POINT_TYPES = {
     QgsWkbTypes.Point,
-    QgsWkbTypes.PointGeometry,
-    QgsWkbTypes.PointM,
-    QgsWkbTypes.Point25D,
-    QgsWkbTypes.PointZ,
-    QgsWkbTypes.PointZM,
     QgsWkbTypes.MultiPoint,
-    QgsWkbTypes.MultiPoint25D,
-    QgsWkbTypes.MultiPointM,
-    QgsWkbTypes.MultiPointZ,
-    QgsWkbTypes.MultiPointZM,
 }
 
 LINE_TYPES = {
-    QgsWkbTypes.LineGeometry,
     QgsWkbTypes.LineString,
-    QgsWkbTypes.LineString25D,
-    QgsWkbTypes.LineStringM,
-    QgsWkbTypes.LineStringZ,
-    QgsWkbTypes.LineStringZM,
     QgsWkbTypes.MultiLineString,
-    QgsWkbTypes.MultiLineString25D,
-    QgsWkbTypes.MultiLineStringM,
-    QgsWkbTypes.MultiLineStringZ,
-    QgsWkbTypes.MultiLineStringZM,
 }
-
 POLYGON_TYPES = {
     QgsWkbTypes.Polygon,
-    QgsWkbTypes.Polygon25D,
-    QgsWkbTypes.PolygonGeometry,
-    QgsWkbTypes.PolygonM,
-    QgsWkbTypes.PolygonZ,
-    QgsWkbTypes.PolygonZM,
     QgsWkbTypes.MultiPolygon,
     QgsWkbTypes.CurvePolygon,
 }
@@ -75,14 +53,22 @@ class LayerType(enum.Enum):
     Point = {"wkb_types": POINT_TYPES}
     Line = {"wkb_types": LINE_TYPES}
     Polygon = {"wkb_types": POLYGON_TYPES}
-    Unknown = {}  # type: ignore
+    Unknown = {"wkb_types": set()}  # type: ignore
+
+    @staticmethod
+    def from_wkb_type(wkb_type: int) -> "LayerType":
+        for l_type in LayerType:
+            if QgsWkbTypes.flatType(wkb_type) in l_type.wkb_types:
+                return l_type
+        return LayerType.Unknown
 
     @staticmethod
     def from_layer(layer: QgsVectorLayer) -> "LayerType":
-        for l_type in LayerType:
-            if layer.wkbType() in l_type.wkb_types:
-                return l_type
-        return LayerType.Unknown
+        return LayerType.from_wkb_type(layer.wkbType())
+
+    @staticmethod
+    def from_geometry(geometry: QgsGeometry) -> "LayerType":
+        return LayerType.from_wkb_type(geometry.wkbType())
 
     @property
     def wkb_types(self) -> Set[QgsWkbTypes.GeometryType]:
@@ -143,3 +129,22 @@ def evaluate_expressions(
     if exp.hasEvalError():
         raise QgsPluginExpressionException(bar_msg=bar_msg(exp.evalErrorString()))
     return value
+
+
+def get_field_index(layer: QgsVectorLayer, field_name: str) -> int:
+    """
+    Get field index if exists
+    :param layer: QgsVectorLayer
+    :param field_name: name of the field
+    :return: index of the field
+    """
+    field_index = layer.fields().indexFromName(field_name)
+    if field_index == -1:
+        raise KeyError(
+            tr(
+                "Field name {} does not exist in layer {}",
+                field_name,
+                layer.name(),
+            )
+        )
+    return field_index

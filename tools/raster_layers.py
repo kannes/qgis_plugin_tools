@@ -5,7 +5,6 @@ __revision__ = "$Format:%H$"
 
 import datetime
 
-from PyQt5.QtCore import Qt
 from qgis.core import (
     QgsContrastEnhancement,
     QgsDateTimeRange,
@@ -14,6 +13,7 @@ from qgis.core import (
     QgsRasterLayer,
     QgsSingleBandGrayRenderer,
 )
+from qgis.PyQt.QtCore import Qt
 
 try:
     from qgis.core import QgsRasterLayerTemporalProperties

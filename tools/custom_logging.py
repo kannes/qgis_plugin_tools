@@ -1,19 +1,19 @@
 """Setting up logging using QGIS, file, Sentry..."""
 
 import logging
+import warnings
 from enum import Enum, unique
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QLayout, QVBoxLayout, QWidget
 from qgis.core import Qgis, QgsMessageLog
 from qgis.gui import QgisInterface, QgsMessageBar
+from qgis.PyQt.QtWidgets import QLayout, QVBoxLayout, QWidget
 
 from .i18n import tr
 from .resources import plugin_name, plugin_path, profile_path
-from .settings import setting_key
+from .settings import get_setting, setting_key
 
 PLUGIN_NAME = plugin_name()
 
@@ -219,7 +219,7 @@ def get_log_level_key(target: LogTarget) -> str:
 
 def get_log_level_name(target: LogTarget) -> str:
     """Finds the log level name of the target """
-    return QSettings().value(get_log_level_key(target), target.default_level, str)
+    return get_setting(get_log_level_key(target), target.default_level, str)
 
 
 def get_log_level(target: LogTarget) -> int:
@@ -242,7 +242,7 @@ def get_log_folder() -> Path:
     return log_dir
 
 
-def setup_logger(
+def setup_logger(  # noqa QGS105
     logger_name: str, iface: Optional[QgisInterface] = None
 ) -> logging.Logger:
     """Run once when the module is loaded and enable logging.
@@ -353,6 +353,10 @@ def setup_task_logger(logger_name: str) -> logging.Logger:
     :param logger_name: The logger name that we want to set up.
     """
 
+    warnings.warn(
+        "setup_task_logger() will be deprecated. Use setup_logger() instead.",
+        PendingDeprecationWarning,
+    )
     stream_level = get_log_level(LogTarget.STREAM)
     logger = logging.getLogger(f"{logger_name}_task")
     logger.setLevel(stream_level)
