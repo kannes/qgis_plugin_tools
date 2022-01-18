@@ -4,7 +4,7 @@ import pytest
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import QCoreApplication
 
-from ...testing.utilities import TestTask
+from ...testing.utilities import SimpleTask
 from ...tools.exceptions import TaskInterruptedException
 from ...widgets import progress_dialog
 
@@ -100,7 +100,7 @@ def test_run_task_with_progress_dialog(
     if should_abort:
         QtCore.QTimer.singleShot(5, abort)
 
-    task = TestTask(sleep_time=0.005)
+    task = SimpleTask(sleep_time=0.005)
 
     # test
     if continuous:
@@ -155,7 +155,7 @@ def test_run_task_with_continuous_progress_dialog_failure(
         nonlocal terminated
         terminated = True
 
-    task = TestTask(will_fail=should_fail, sleep_time=0.005)
+    task = SimpleTask(will_fail=should_fail, sleep_time=0.005)
 
     # test
     progress_dialog.run_task_with_continuous_progress_dialog(

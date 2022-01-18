@@ -86,7 +86,7 @@ class TestTaskRunner:
         return self.success
 
 
-class TestTask(BaseTask):
+class SimpleTask(BaseTask):
     """
     Test task to used in tests needing a simple task.
     """
