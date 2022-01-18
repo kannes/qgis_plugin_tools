@@ -171,7 +171,7 @@ def resources_path(*args: str) -> str:
 
 
 def qgis_plugin_tools_resources(*args: str) -> str:
-    """ Get the path within the qgis_plugin_tools submodule """
+    """Get the path within the qgis_plugin_tools submodule"""
     return str(Path(__file__, "..", "..", "resources", *args).resolve().absolute())
 
 
@@ -188,7 +188,7 @@ def load_ui(*args: str) -> QWidget:
 
 
 def ui_file_dialog(*ui_file_name_parts: str):  # noqa ANN201
-    """ DRY helper for building classes from a .ui file """
+    """DRY helper for building classes from a .ui file"""
 
     class UiFileDialogClass(QDialog, load_ui(*ui_file_name_parts)):  # type: ignore
         def __init__(

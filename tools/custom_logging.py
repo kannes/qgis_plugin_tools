@@ -25,7 +25,7 @@ __revision__ = "$Format:%H$"
 
 @unique
 class LogTarget(Enum):
-    """ Log target with default logging level as value """
+    """Log target with default logging level as value"""
 
     STREAM = {"id": "stream", "default": "INFO"}
     FILE = {"id": "file", "default": "INFO"}
@@ -213,17 +213,17 @@ def add_logging_handler_once(logger: logging.Logger, handler: logging.Handler) -
 
 
 def get_log_level_key(target: LogTarget) -> str:
-    """Finds QSetting key for log level """
+    """Finds QSetting key for log level"""
     return setting_key("log_level", target.id)
 
 
 def get_log_level_name(target: LogTarget) -> str:
-    """Finds the log level name of the target """
+    """Finds the log level name of the target"""
     return get_setting(get_log_level_key(target), target.default_level, str)
 
 
 def get_log_level(target: LogTarget) -> int:
-    """Finds log level of the target """
+    """Finds log level of the target"""
     return logging.getLevelName(get_log_level_name(target))
 
 
