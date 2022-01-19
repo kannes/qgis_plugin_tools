@@ -3,7 +3,7 @@ __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 
 import logging
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 
 from qgis.core import QgsApplication, QgsTask
 from qgis.PyQt import uic
@@ -68,14 +68,13 @@ class ProgressDialog(QDialog, FORM_CLASS):
         LOGGER.debug(f"Status:   {status_text}")
         self.status_label.setText(status_text)
 
-    def update_progress_bar(self, progress: float) -> None:
-        """ Update progress bar with a progress """
-        LOGGER.debug(f"Progress {progress}")
-        self.progress_bar.setValue(min(100.0, progress))
+    def update_progress_bar(self, progress: Union[int, float]) -> None:
+        """Update progress bar with a progress"""
+        self.progress_bar.setValue(int(min(100, progress)))
 
     def closeEvent(self, close_event: QCloseEvent) -> None:  # noqa: N802
         super().closeEvent(close_event)
-        LOGGER.warning("Closing progress bar, aborting")
+        LOGGER.warning("Closing progress bar")
         self.aborted.emit()
 
     @log_if_fails

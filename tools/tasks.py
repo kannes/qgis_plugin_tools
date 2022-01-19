@@ -93,7 +93,7 @@ class BaseTask(QgsTask):
         raise NotImplementedError()
 
     def _check_if_canceled(self) -> None:
-        """ Check if the task has been canceled """
+        """Check if the task has been canceled"""
         if self.isCanceled():
             raise TaskInterruptedException(tr("Task canceled!"))
 
