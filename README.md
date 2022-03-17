@@ -1,6 +1,11 @@
 # QGIS Plugin tools
-![](https://github.com/GispoCoding/qgis_plugin_tools/workflows/Tests/badge.svg)
+[![PyPI version](https://badge.fury.io/py/qgis_plugin_tools.svg)](https://badge.fury.io/py/qgis_plugin_tools)
+[![Downloads](https://img.shields.io/pypi/dm/qgis_plugin_tools.svg)](https://pypistats.org/packages/qgis_plugin_tools)
+![CI](https://github.com/GispoCoding/qgis_plugin_tools/workflows/Tests/badge.svg)
+[![Code on Github](https://img.shields.io/badge/Code-GitHub-brightgreen)](https://github.com/GispoCoding/pytest-qgis)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 
 
@@ -36,6 +41,11 @@ This will create needed structure for your plugin
 1. `git submodule add https://github.com/GispoCoding/qgis_plugin_tools.git`
 1. To get most out of the submodule, try to refactor the plugin to use the default [plugin tree](#Plugin-tree-example)
 
+### As external dependency
+This project can also be used as an external dependency. It can be installed via pip:
+```shell
+pip install qgis_plugin_tools
+```
 
 ### Setting up development environment
 Refer to [development](https://github.com/GispoCoding/cookiecutter-qgis-plugin/blob/main/%7B%7Bcookiecutter.project_directory%7D%7D/docs/development.md#setting-up-development-environment) documentation.
