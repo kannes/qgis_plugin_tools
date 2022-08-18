@@ -25,7 +25,7 @@ def version(remove_v_prefix: bool = True) -> str:
 
 
 def proj_version() -> Tuple[int, int]:
-    """Returns PROJ library version """
+    """Returns PROJ library version"""
     major: int = osr.GetPROJVersionMajor()
     minor: int = osr.GetPROJVersionMinor()
     return major, minor

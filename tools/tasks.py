@@ -6,9 +6,8 @@ from qgis.core import QgsTask
 from .exceptions import QgsPluginException, TaskInterruptedException
 from .i18n import tr
 from .messages import MsgBar
-from .resources import plugin_name
 
-LOGGER = logging.getLogger(plugin_name())
+LOGGER = logging.getLogger(__name__)
 
 __copyright__ = "Copyright 2021, qgis_plugin_tools contributors"
 __license__ = "GPL version 3"
@@ -93,7 +92,7 @@ class BaseTask(QgsTask):
         raise NotImplementedError()
 
     def _check_if_canceled(self) -> None:
-        """ Check if the task has been canceled """
+        """Check if the task has been canceled"""
         if self.isCanceled():
             raise TaskInterruptedException(tr("Task canceled!"))
 

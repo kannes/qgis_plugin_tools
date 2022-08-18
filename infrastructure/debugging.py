@@ -10,7 +10,7 @@ import sys
 
 
 def _check_if_should_setup() -> bool:
-    """ Check whether to connect to debug server or not """
+    """Check whether to connect to debug server or not"""
     return "pytest" not in sys.modules and not os.environ.get("QGIS_PLUGIN_IN_CI")
 
 

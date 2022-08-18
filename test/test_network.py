@@ -9,17 +9,17 @@ from ..tools.exceptions import QgsPluginNetworkException
 from ..tools.network import download_to_file, fetch
 
 
-def test_fetch(new_project):
+def test_fetch(qgis_new_project):
     data_model = fetch("https://www.gispo.fi/")
     assert len(data_model) > 10000
 
 
-def test_fetch_invalid_url(new_project):
+def test_fetch_invalid_url(qgis_new_project):
     with pytest.raises(QgsPluginNetworkException):
         fetch("invalidurl")
 
 
-def test_fetch_params(new_project):
+def test_fetch_params(qgis_new_project):
     data_model = fetch("https://www.gispo.fi/", params={"foo": "bar"})
     assert len(data_model) > 10000
 
@@ -28,7 +28,7 @@ def test_fetch_params(new_project):
     "file does not exist. "
     "TODO: search another file to be used using Content-Disposition"
 )
-def test_download_to_file(new_project, tmpdir):
+def test_download_to_file(qgis_new_project, tmpdir):
     path_to_file = download_to_file(
         "https://twitter.com/gispofinland/status/1324599933337567232/photo/1",
         tmpdir,
@@ -42,7 +42,7 @@ def test_download_to_file(new_project, tmpdir):
     "file does not exist. "
     "TODO: search another file to be used using Content-Disposition"
 )
-def test_download_to_file_without_requests(new_project, tmpdir):
+def test_download_to_file_without_requests(qgis_new_project, tmpdir):
     path_to_file = download_to_file(
         "https://twitter.com/gispofinland/status/1324599933337567232/photo/1",
         tmpdir,
@@ -53,7 +53,7 @@ def test_download_to_file_without_requests(new_project, tmpdir):
     assert path_to_file.is_file()
 
 
-def test_download_to_file_with_name(new_project, tmpdir):
+def test_download_to_file_with_name(qgis_new_project, tmpdir):
     path_to_file = download_to_file(
         "https://raw.githubusercontent.com/GispoCoding/FMI2QGIS/master/FMI2QGIS/test/data/aq_small.nc",  # noqa E501
         tmpdir,
@@ -63,11 +63,11 @@ def test_download_to_file_with_name(new_project, tmpdir):
     assert path_to_file.name == "aq_small.nc"
 
 
-def test_download_to_file_invalid_url(new_project, tmpdir):
+def test_download_to_file_invalid_url(qgis_new_project, tmpdir):
     with pytest.raises(QgsPluginNetworkException):
         download_to_file("invalidurl", tmpdir)
 
 
-def test_download_to_file_invalid_url_without_requests(new_project, tmpdir):
+def test_download_to_file_invalid_url_without_requests(qgis_new_project, tmpdir):
     with pytest.raises(QgsPluginNetworkException):
         download_to_file("invalidurl", tmpdir)

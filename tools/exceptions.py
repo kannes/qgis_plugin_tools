@@ -11,7 +11,7 @@ from .i18n import tr
 
 
 class QgsPluginException(Exception):
-    """ Use this as a base exception class in custom exceptions """
+    """Use this as a base exception class in custom exceptions"""
 
     # Override default_msg to set default message in inherited classes
     default_msg = ""
