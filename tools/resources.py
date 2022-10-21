@@ -110,9 +110,11 @@ def profile_path(*args: str) -> str:
 
 
 def plugin_name() -> str:
-    """Return the plugin name according to metadata.txt.
+    """Return the plugin name according to metadata.txt but stripped of spaces.
+    This is because lots of the code assumes plugin_name returns a string without
+    spaces.
 
-    :return: The plugin name.
+    :return: The stripped plugin name.
     :rtype: basestring
     """
     global PLUGIN_NAME, _IS_SUBMODULE_USAGE
@@ -133,6 +135,20 @@ def plugin_name() -> str:
         PLUGIN_NAME = name
 
     return name
+
+
+def plugin_display_name() -> str:
+    """Return the plugin name according to metadata.txt, including spaces,
+    for displaying to the end user.
+
+    :return: The original plugin name.
+    :rtype: basestring
+    """
+    try:
+        metadata = metadata_config()
+        return metadata["general"]["name"]
+    except KeyError:
+        return "Test plugin"
 
 
 def slug_name() -> str:
