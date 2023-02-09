@@ -3,15 +3,18 @@ __license__ = "GPL version 3"
 __email__ = "info@gispo.fi"
 __revision__ = "$Format:%H$"
 
+import json
+
 import pytest
 
 from ..tools.exceptions import QgsPluginNetworkException
-from ..tools.network import download_to_file, fetch
+from ..tools.network import download_to_file, fetch, post
 
 
 def test_fetch(qgis_new_project):
-    data_model = fetch("https://www.gispo.fi/")
-    assert len(data_model) > 10000
+    data = fetch("https://httpbin.org/get")
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/get"
 
 
 def test_fetch_invalid_url(qgis_new_project):
@@ -20,8 +23,60 @@ def test_fetch_invalid_url(qgis_new_project):
 
 
 def test_fetch_params(qgis_new_project):
-    data_model = fetch("https://www.gispo.fi/", params={"foo": "bar"})
-    assert len(data_model) > 10000
+    data = fetch("https://httpbin.org/get", params={"foo": "bar"})
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/get?foo=bar"
+    assert data["args"] == {"foo": "bar"}
+
+
+def test_post(qgis_new_project):
+    data = post("https://httpbin.org/post")
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/post"
+
+
+def test_post_invalid_url(qgis_new_project):
+    with pytest.raises(QgsPluginNetworkException):
+        post("invalidurl")
+
+
+def test_post_data(qgis_new_project):
+    data = post("https://httpbin.org/post", data={"foo": "bar"})
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/post"
+    assert data["data"] == json.dumps({"foo": "bar"})
+
+
+def test_upload_file(qgis_new_project, file_fixture):
+    file_name, file_content, file_type = file_fixture
+    data = post(
+        "https://httpbin.org/post",
+        files=[("file", (file_name, file_content, file_type))],
+    )
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/post"
+    assert data["files"]
+    assert bytes(data["files"]["file"], "utf-8") == file_content
+
+
+def test_upload_multiple_files(qgis_new_project, file_fixture, another_file_fixture):
+    file_name, file_content, file_type = file_fixture
+    another_file_name, another_file_content, another_file_type = another_file_fixture
+    data = post(
+        "https://httpbin.org/post",
+        files=[
+            ("file", (file_name, file_content, file_type)),
+            (
+                "another_file",
+                (another_file_name, another_file_content, another_file_type),
+            ),
+        ],
+    )
+    data = json.loads(data)
+    assert data["url"] == "https://httpbin.org/post"
+    assert data["files"]
+    assert bytes(data["files"]["file"], "utf-8") == file_content
+    assert bytes(data["files"]["another_file"], "utf-8") == another_file_content
 
 
 @pytest.mark.skip(
