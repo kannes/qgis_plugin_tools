@@ -19,7 +19,7 @@ def setting_key(*args: str) -> str:
 def get_setting(
     key: str,
     default: Optional[Any] = None,
-    typehint: type = None,
+    typehint: Optional[type] = None,
     internal: bool = True,
     section: int = QgsSettings.NoSection,
 ) -> Union[QVariant, str]:
@@ -62,7 +62,7 @@ def set_setting(
 def get_project_setting(
     key: str,
     default: Optional[Any] = None,
-    typehint: type = None,
+    typehint: Optional[type] = None,
     internal: bool = True,
 ) -> Union[QVariant, str, None]:
     """

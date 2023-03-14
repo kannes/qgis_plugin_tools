@@ -189,7 +189,6 @@ Put -h after command to see available optional arguments if any
         pre_args = self._get_platform_args()
         for fil in self.resources:
             if os.path.exists(fil):
-
                 args = pre_args + [self.pyrcc, "-o", fil.replace(".qrc", ".py"), fil]
                 self.run_command(args)
             else:
