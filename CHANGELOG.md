@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2023-03-14
+
 - Feature: Add api to safely load package files
 - Maintenance: Updated development dependencies
 - Maintenance: Added automatic release actions
