@@ -17,6 +17,7 @@ def get_qgis_app():  # noqa
     warnings.warn(
         "get_qgis_app() is deprecated. Use library pytest-qgis instead.",
         DeprecationWarning,
+        stacklevel=2,
     )
     raise QgsPluginNotImplementedException(
         "get_qgis_app() is deprecated. Use library pytest-qgis instead."
