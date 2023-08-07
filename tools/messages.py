@@ -27,6 +27,8 @@ class MessageBarLogger:
         details: Any = "",
         duration: Optional[int] = None,
         success: bool = False,
+        exc_info: Optional[Exception] = None,
+        stack_info: bool = False,
     ) -> None:
         """
         Logs info messages to message bar and to other logging handlers
@@ -36,15 +38,24 @@ class MessageBarLogger:
             ``duration`` is set to 0, then the message must be manually dismissed
             by the user.
         :param success: Whether the message is success message or not
+        :param exc_info: Exception of handled exception for capturing traceback
+        :param stack_info: Whether to include stack info
         """
 
         self._logger.info(
             str(message),
             extra=bar_msg(details, duration, success),
-            **self._logger_kwargs
+            exc_info=exc_info,
+            stack_info=stack_info,
+            **self._logger_kwargs,
         )
         if details != "":
-            self._logger.info(str(details), **self._logger_kwargs)
+            self._logger.info(
+                str(details),
+                exc_info=exc_info,
+                stack_info=stack_info,
+                **self._logger_kwargs,
+            )
 
     def warning(
         self,
@@ -52,6 +63,8 @@ class MessageBarLogger:
         details: Any = "",
         duration: Optional[int] = None,
         success: bool = False,
+        exc_info: Optional[Exception] = None,
+        stack_info: bool = False,
     ) -> None:
         """
         Logs warning messages to message bar and to other logging handlers
@@ -61,14 +74,23 @@ class MessageBarLogger:
             ``duration`` is set to 0, then the message must be manually dismissed
             by the user.
         :param success: Whether the message is success message or not
+        :param exc_info: Exception of handled exception for capturing traceback
+        :param stack_info: Whether to include stack info
         """
         self._logger.warning(
             str(message),
             extra=bar_msg(details, duration, success),
-            **self._logger_kwargs
+            exc_info=exc_info,
+            stack_info=stack_info,
+            **self._logger_kwargs,
         )
         if details != "":
-            self._logger.warning(str(details), **self._logger_kwargs)
+            self._logger.warning(
+                str(details),
+                exc_info=exc_info,
+                stack_info=stack_info,
+                **self._logger_kwargs,
+            )
 
     def error(
         self,
@@ -76,24 +98,34 @@ class MessageBarLogger:
         details: Any = "",
         duration: Optional[int] = None,
         success: bool = False,
+        exc_info: Optional[Exception] = None,
+        stack_info: bool = False,
     ) -> None:
         """
-        Logs error without traceback of risen exception to message bar and to
-        other logging handlers
+        Logs error of risen exception to message bar and to other logging handlers
         :param message: Header of the message
         :param details: Longer body of the message. Can be set to empty string.
         :param duration: can be used to specify the message timeout in seconds. If
             ``duration`` is set to 0, then the message must be manually dismissed
             by the user.
         :param success: Whether the message is success message or not
+        :param exc_info: Exception of handled exception for capturing traceback
+        :param stack_info: Whether to include stack info
         """
         self._logger.error(
             str(message),
             extra=bar_msg(details, duration, success),
-            **self._logger_kwargs
+            exc_info=exc_info,
+            stack_info=stack_info,
+            **self._logger_kwargs,
         )
         if details != "":
-            self._logger.error(str(details), **self._logger_kwargs)
+            self._logger.error(
+                str(details),
+                exc_info=exc_info,
+                stack_info=stack_info,
+                **self._logger_kwargs,
+            )
 
     def exception(
         self,
@@ -101,6 +133,8 @@ class MessageBarLogger:
         details: Any = "",
         duration: Optional[int] = None,
         success: bool = False,
+        exc_info: Optional[Exception] = None,
+        stack_info: bool = False,
     ) -> None:
         """
         Logs error with traceback of risen exception to message bar and to
@@ -111,14 +145,22 @@ class MessageBarLogger:
             ``duration`` is set to 0, then the message must be manually dismissed
             by the user.
         :param success: Whether the message is success message or not
+        :param exc_info: Exception of handled exception for capturing traceback
+        :param stack_info: Whether to include stack info
         """
         self._logger.exception(
             str(message),
             extra=bar_msg(details, duration, success),
-            **self._logger_kwargs
+            stack_info=stack_info,
+            **self._logger_kwargs,
         )
         if details != "":
-            self._logger.error(str(details), **self._logger_kwargs)
+            self._logger.error(
+                str(details),
+                exc_info=exc_info,
+                stack_info=stack_info,
+                **self._logger_kwargs,
+            )
 
 
 # publish the old MsgBar with the default logger name

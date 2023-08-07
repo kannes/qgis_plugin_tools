@@ -27,9 +27,9 @@ def log_if_fails(fn: Callable) -> Callable:
             else:
                 fn(*args[:-1], **kwargs)
         except QgsPluginException as e:
-            MsgBar.exception(e, **e.bar_msg)
+            MsgBar.exception(e, **e.bar_msg, stack_info=True)
         except Exception as e:
-            MsgBar.exception(tr("Unhandled exception occurred"), e)
+            MsgBar.exception(tr("Unhandled exception occurred"), e, stack_info=True)
 
     return wrapper
 
