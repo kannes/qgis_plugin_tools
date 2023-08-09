@@ -11,6 +11,10 @@ from ..tools.exceptions import QgsPluginNetworkException
 from ..tools.network import download_to_file, fetch, post
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_fetch(qgis_new_project):
     data = fetch("https://httpbin.org/get")
     data = json.loads(data)
@@ -22,6 +26,10 @@ def test_fetch_invalid_url(qgis_new_project):
         fetch("invalidurl")
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_fetch_params(qgis_new_project):
     data = fetch("https://httpbin.org/get", params={"foo": "bar"})
     data = json.loads(data)
@@ -29,6 +37,10 @@ def test_fetch_params(qgis_new_project):
     assert data["args"] == {"foo": "bar"}
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_post(qgis_new_project):
     data = post("https://httpbin.org/post")
     data = json.loads(data)
@@ -40,6 +52,10 @@ def test_post_invalid_url(qgis_new_project):
         post("invalidurl")
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_post_data(qgis_new_project):
     data = post("https://httpbin.org/post", data={"foo": "bar"})
     data = json.loads(data)
@@ -47,6 +63,10 @@ def test_post_data(qgis_new_project):
     assert data["data"] == json.dumps({"foo": "bar"})
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_upload_file(qgis_new_project, file_fixture):
     file_name, file_content, file_type = file_fixture
     data = post(
@@ -59,6 +79,10 @@ def test_upload_file(qgis_new_project, file_fixture):
     assert bytes(data["files"]["file"], "utf-8") == file_content
 
 
+@pytest.mark.skip(
+    "Skipped due httbin.org being flaky."
+    "TODO: refactor tests not to be dependent of an external http api"
+)
 def test_upload_multiple_files(qgis_new_project, file_fixture, another_file_fixture):
     file_name, file_content, file_type = file_fixture
     another_file_name, another_file_content, another_file_type = another_file_fixture
