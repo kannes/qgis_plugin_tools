@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2023-08-08
+
+- Feature: Add `exc_info` and `stack_info` parameters to message bar logger for capturing exception.
+
 ## [0.3.0] - 2023-03-14
 
 - Feature: Add api to safely load package files
