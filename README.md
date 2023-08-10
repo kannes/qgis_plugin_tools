@@ -47,6 +47,12 @@ This project can also be used as an external dependency. It can be installed via
 pip install qgis_plugin_tools
 ```
 
+The project can also be installed in editable mode, but you must use setuptool's strict mode
+because of the submodule nature of the project:
+```
+pip install -e /path/to/qgis_plugin_tools --use-pep517 --config-settings editable_mode=strict
+```
+
 ### Setting up development environment
 Refer to [development](https://github.com/GispoCoding/cookiecutter-qgis-plugin/blob/main/%7B%7Bcookiecutter.project_directory%7D%7D/docs/development.md#setting-up-development-environment) documentation.
 
