@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Fix: Recover from `TypeError` when getting plugin path (when using pytest-xdist)
+## [0.3.2] - 2023-11-29
+
+- Fix: Recover from `TypeError` when getting plugin path. Enables pytest-xdist usage.
 
 ## [0.3.1] - 2023-08-08
 
