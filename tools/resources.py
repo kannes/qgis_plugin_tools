@@ -297,11 +297,16 @@ def package_file(package: importlib.resources.Package, file_name: str) -> Path:
 
     Use like importlib.resources, provide a package (module or string)
     and file name/path inside the package.
+
+    >>> package_file('myplugin.resources', 'image.svg')
+    C:/Users/me/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/myplugin/resources/image.svg
+
+    >>> import myplugin.resources
+    >>> package_file(myplugin.resources, 'image.svg')
+    C:/Users/me/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/myplugin/resources/image.svg
     """
 
-    with importlib.resources.as_file(
-        importlib.resources.files(package).joinpath(file_name)
-    ) as requested_path:
+    with importlib.resources.path(package, file_name) as requested_path:
         if not requested_path.is_file():
             raise FileNotFoundError(
                 f"requested file {file_name} not found in {package}"
