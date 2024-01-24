@@ -5,7 +5,7 @@ import inspect
 import sys
 from os.path import abspath, dirname, exists, join, pardir
 from pathlib import Path
-from typing import Dict, NamedTuple, Optional
+from typing import Dict, Iterator, NamedTuple, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QWidget
@@ -43,6 +43,22 @@ def _plugin_path_submodule() -> str:
         path = abspath(abspath(join(path, pardir)))
 
     return path
+
+
+def _iterate_modules(module_name: str) -> Iterator[str]:
+    """Iterates modules bottom up
+
+    >>> list(_iterate_modules("plugin.tools.resources"))
+    [
+        "plugin.tools.resources",
+        "plugin.tools",
+        "plugin"
+    ]
+    """
+
+    modules = module_name.split(".")
+    for i in range(len(modules), 0, -1):
+        yield ".".join(modules[:i])
 
 
 class IsPluginResult(NamedTuple):
@@ -89,17 +105,18 @@ def _is_module_qgis_plugin(module_name: str) -> IsPluginResult:
 
 
 def _plugin_path_dependency() -> str:
-    # go up the stack until first metadata.txt is found
-    # relative to the calling modules top level package name
-    # probably inefficient, but if the runtime is not a dependency
-    # but a subtree instead this might not need any optimizations?
-    import inspect
+    """Get the path to the plugin package folder.
+
+    Goes up the call stack and up the parent packages until package is
+    recognized as QGIS plugin.
+    """
 
     for frame_info in inspect.stack():
-        module_name: Optional[str] = frame_info.frame.f_globals.get("__name__")
-        if module_name is not None:
-            top_level_name, *_ = module_name.split(".", maxsplit=1)
-            if is_plugin := _is_module_qgis_plugin(top_level_name):
+        caller_module_name: Optional[str] = frame_info.frame.f_globals.get("__name__")
+        if caller_module_name is None:
+            continue
+        for module_name in _iterate_modules(caller_module_name):
+            if is_plugin := _is_module_qgis_plugin(module_name):
                 assert is_plugin.plugin_directory
                 return is_plugin.plugin_directory
 
