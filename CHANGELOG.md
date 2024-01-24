@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-1-24
+
 - Feature: New method `resources.load_ui_from_file()` to load a ui file from direct filepath
 - Feature: Support subplugins. In some special cases it is wanted to include a plugin inside another. Now `resources.plugin_path()` supports this.
 - Fix: Change the implementation of `resources.package_file()` to support Python 3.8
