@@ -5,10 +5,14 @@ import inspect
 import sys
 from os.path import abspath, dirname, exists, join, pardir
 from pathlib import Path
-from typing import Dict, Iterator, NamedTuple, Optional
+from typing import TYPE_CHECKING, Dict, Iterator, NamedTuple, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QWidget
+
+if TYPE_CHECKING:
+    import os
+    from typing import Union
 
 __copyright__ = (
     "Copyright 2019, 3Liz, 2020-2021 Gispo Ltd, "
@@ -320,7 +324,12 @@ def load_ui(*args: str) -> QWidget:
 
     :return: Compiled UI file.
     """
-    ui_class, _ = uic.loadUiType(resources_path("ui", *args))
+    ui_file_path = resources_path("ui", *args)
+    return load_ui_from_file(ui_file_path)
+
+
+def load_ui_from_file(ui_file_path: "Union[str, os.PathLike]") -> QWidget:
+    ui_class, _ = uic.loadUiType(ui_file_path)
     return ui_class
 
 
