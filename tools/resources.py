@@ -1,10 +1,11 @@
 """Tools to work with resource files."""
 import configparser
 import importlib.resources
+import inspect
 import sys
 from os.path import abspath, dirname, exists, join, pardir
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, NamedTuple, Optional
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtWidgets import QDialog, QWidget
@@ -44,6 +45,49 @@ def _plugin_path_submodule() -> str:
     return path
 
 
+class IsPluginResult(NamedTuple):
+    is_plugin: bool
+    plugin_directory: Optional[str] = None
+
+    def __bool__(self) -> bool:
+        return self.is_plugin
+
+
+def _is_module_qgis_plugin(module_name: str) -> IsPluginResult:
+    """Checks if the module is a QGIS plugin
+
+    A plugin module has a classFactory method and a metadata.txt at the package root.
+
+    Returns a IsPluginResult thats compares to True when the module given is a plugin.
+
+    >>> if is_plugin := _is_module_qgis_plugin('myplugin'):
+    >>>    print(f"Plugin is installed ad {is_plugin.plugin_directory}")
+    """
+
+    module = sys.modules.get(module_name)
+    if module is None or not inspect.ismodule(module):
+        return IsPluginResult(False)
+
+    class_factory_function = getattr(module, "classFactory", None)
+    if class_factory_function is None or not inspect.isfunction(class_factory_function):
+        return IsPluginResult(False)
+
+    try:
+        source_file = inspect.getsourcefile(module)
+    except TypeError:
+        # TypeError is thrown for built-in modules. We are only interested in
+        # custom modules, so it is safe to ignore the error.
+        return IsPluginResult(False)
+    if not source_file:
+        return IsPluginResult(False)
+
+    source_directory = dirname(source_file)
+    if not exists(join(source_directory, "metadata.txt")):
+        return IsPluginResult(False)
+
+    return IsPluginResult(True, source_directory)
+
+
 def _plugin_path_dependency() -> str:
     # go up the stack until first metadata.txt is found
     # relative to the calling modules top level package name
@@ -55,20 +99,9 @@ def _plugin_path_dependency() -> str:
         module_name: Optional[str] = frame_info.frame.f_globals.get("__name__")
         if module_name is not None:
             top_level_name, *_ = module_name.split(".", maxsplit=1)
-            top_level_module = sys.modules.get(top_level_name)
-            if top_level_module is not None:
-                try:
-                    top_level_directory = Path(inspect.getfile(top_level_module)).parent
-                except TypeError:
-                    # TypeError gets thrown if
-                    # pytest-xdist is used in tests since it
-                    # adds <module '__main__' (built-in)> into stack
-                    # The 'getfile' function throws a TypeError for built-in modules.
-                    # We are only interested in custom modules, so it is safe to ignore
-                    # the error.
-                    continue
-                if (top_level_directory / "metadata.txt").exists():
-                    return str(top_level_directory)
+            if is_plugin := _is_module_qgis_plugin(top_level_name):
+                assert is_plugin.plugin_directory
+                return is_plugin.plugin_directory
 
     # fall back to default directory tree
     return _plugin_path_submodule()
