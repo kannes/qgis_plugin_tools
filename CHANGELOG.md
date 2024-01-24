@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix: Change the implementation of `resources.package_file()` to support Python 3.8
 - Refactor: Changed the plugin identification logic used in `resources.plugin_path()`
 - Maintenance: Updated development dependencies
+- Maintenance: Test on three latest LTR release. That means we drop support for QGIS 3.16.
 
 ## [0.3.2] - 2023-11-29
 
