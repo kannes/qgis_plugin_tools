@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Fix: Fix submodule usage detection when installed as an embedded dependency
+- Fix: Consider only external calls when detecting plugin path
 
 ## [0.4.0] - 2024-1-24
 
