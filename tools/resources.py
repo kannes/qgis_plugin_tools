@@ -28,15 +28,33 @@ PLUGIN_NAME: str = ""
 SLUG_NAME: str = ""
 
 
-_TOP_LEVEL_NAME = __name__.split(".", maxsplit=1)[0]
-_IS_SUBMODULE_USAGE = not _TOP_LEVEL_NAME == "qgis_plugin_tools"
+def is_submodule() -> bool:
+    """Detects if qgis_plugin_tools is used as a submodule
+
+    Checks if the second level package name is qgis_plugin_tools
+    The __name__ is:
+    - "myplugin.qgis_plugin_tools.tools.resources" when used as a submodule
+    - "myplugin.dependencies.qgis_plugin_tools.tools.resources" when used as embedded
+      dependency
+    - "qgis_plugin_tools.tools.resources" when used as pip installed package
+    """
+
+    try:
+        _, second_level_package_name, *_ = __name__.split(".")
+    except ValueError:
+        return False
+    return second_level_package_name == "qgis_plugin_tools"
+
+
+_IS_SUBMODULE_USAGE = is_submodule()
 
 
 def _plugin_path_submodule() -> str:
     # assume qgis_plugin_tools is inside the plugin package,
     # use the path to the top level module name
 
-    module_file = sys.modules[_TOP_LEVEL_NAME].__file__
+    top_level_package_name = __name__.split(".", maxsplit=1)[0]
+    module_file = sys.modules[top_level_package_name].__file__
 
     if module_file is not None:
         path = str(Path(module_file).parent.resolve())
