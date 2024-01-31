@@ -129,13 +129,13 @@ def _is_module_qgis_plugin(module_name: str) -> IsPluginResult:
 def _plugin_path_dependency() -> str:
     """Get the path to the plugin package folder.
 
-    Goes up the call stack and up the parent packages until package is
-    recognized as QGIS plugin.
+    Traverses packages of calling modules bottom up and checks if it is a qgis plugin.
     """
 
     for frame_info in inspect.stack():
         caller_module_name: Optional[str] = frame_info.frame.f_globals.get("__name__")
-        if caller_module_name is None:
+        if caller_module_name is None or "qgis_plugin_tools" in caller_module_name:
+            # We are interested only on calls from outside of qgis_plugin_tools
             continue
         for module_name in _iterate_modules(caller_module_name):
             if is_plugin := _is_module_qgis_plugin(module_name):
